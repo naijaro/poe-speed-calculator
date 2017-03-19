@@ -17,7 +17,31 @@
     <!--
     <script type="text/javascript" src="https://rawgit.com/naijaro/poe-speed-calculator/master/js/test.js"></script>
     -->
-    <style media="screen" type="text/css">      
+    <style media="screen" type="text/css">
+      .btn-info-alt {
+        color: #ffffff;
+        background-image: -webkit-linear-gradient(#ab74e3, #915bde  60%, #8b4adb);
+        background-image: -o-linear-gradient(#ab74e3, #915bde  60%, #8b4adb);
+        background-image: -webkit-gradient(linear, left top, left bottom, from(#ab74e3), color-stop(60%, #915bde ), to(#8b4adb));
+        background-image: linear-gradient(#ab74e3, #915bde  60%, #8b4adb);
+        background-repeat: no-repeat;
+        filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffab74e3', endColorstr='#ff8b4adb', GradientType=0);
+        -webkit-filter: none;
+        filter: none;
+      }
+      .btn-info-alt:hover {
+        background-image: -webkit-linear-gradient(#895cb7, #784bb9  60%, #6b39a9);
+        background-image: -o-linear-gradient(#895cb7, #784bb9  60%, #6b39a9);
+        background-image: -webkit-gradient(linear, left top, left bottom, from(#895cb7), color-stop(60%, #784bb9 ), to(#6b39a9));
+        background-image: linear-gradient(#895cb7, #784bb9  60%, #6b39a9);        
+        background-repeat: no-repeat;
+        filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff895cb7', endColorstr='#ff6b39a9', GradientType=0);
+        -webkit-filter: none;
+        filter: none;
+      }
+      .well {
+        padding-bottom: 0;
+      }
       .panel .toggle.btn {
         width: 100%;
         margin-bottom: 5px;
@@ -28,12 +52,23 @@
       .panel .effect-checkbox {
         width: 100%;
       }
+      .panel .panel-heading {
+        position: relative;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
       .panel .panel-heading .badge {
         float: right;
         border-radius: 50%;
+        position: absolute;
+        right: 7px;
+        top: 11px;
       }
       .panel > .panel-heading .badge-info {
         background-color: #5bc0de;
+      }
+      .panel > .panel-heading .badge-info-alt {
+        background-color: #915bde ;
       }
     </style>
   </head>
@@ -47,204 +82,218 @@
     </div>
     <div class="container" style="margin-top: 50px;">
       <h1>Speed Calculator</h1>
-      <p>version 1.0 (Beta)</p>
-      <br/>      
-      <form class="form-horizontal">
-        <h3>Equipment</h3>
-        <div class="well">
-          <div class="row">
-            <div class="col-lg-3 col-sm-6 col-xs-12">
-              <div class="panel panel-default">
-                <div class="panel-heading">Armor Type</div>
-                <div class="panel-body">
-                  <select class="form-control">
-                    <option>Naked</option>
-                    <option>Cloth</option>
-                    <option>Robe</option>
-                    <option>Padded</option>
-                    <option>Hide</option>
-                    <option>Leather</option>
-                    <option>Scale</option>
-                    <option>Breastplate</option>
-                    <option>Mail</option>
-                    <option>Brigandine</option>
-                    <option>Plate</option>
-                  </select>
-                  <div class="checkbox">
-                    <label><input type="checkbox"> Is Durganized</label>
+      <p>version 0.3 (Alpha) <a class="text-muted" href="https://forums.obsidian.net/user/160416-maxquest/">by MaxQuest</a></p>     
+      <form class="form-horizontal" style="margin-top: 5px;">
+        <div class="row">
+          <div class="col-lg-6 col-md-6 col-xs-12">
+            <h3>Equipment</h3>
+            <div class="well">
+              <div class="row">
+                <div class="col-lg-6 col-sm-6 col-xs-12">
+                  <div class="panel panel-default">
+                    <div class="panel-heading">Armor Type</div>
+                    <div class="panel-body">
+                      <select class="form-control">
+                        <option>Naked</option>
+                        <option>Cloth</option>
+                        <option>Robe</option>
+                        <option>Padded</option>
+                        <option>Hide</option>
+                        <option>Leather</option>
+                        <option>Scale</option>
+                        <option>Breastplate</option>
+                        <option>Mail</option>
+                        <option>Brigandine</option>
+                        <option>Plate</option>
+                      </select>
+                      <div class="checkbox">
+                        <label><input type="checkbox"> Is Durganized</label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-lg-6 col-sm-6 col-xs-12">
+                  <div class="panel panel-default">
+                    <div class="panel-heading">Gloves</div>
+                    <div class="panel-body">
+                      <select class="form-control">
+                        <option>Other</option>
+                        <option>Gauntlets of Swift Action</option>
+                        <option>Mourning Gloves</option>
+                        <option>Pilferer's Grip</option>
+                      </select>
+                      <div style="min-height: 29px;">&nbsp;</div>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-            <div class="col-lg-3 col-sm-6 col-xs-12">
-              <div class="panel panel-default">
-                <div class="panel-heading">Gloves</div>
-                <div class="panel-body">
-                  <select class="form-control">
-                    <option>Other</option>
-                    <option>Gauntlets of Swift Action</option>
-                    <option>Mourning Gloves</option>
-                    <option>Pilferer's Grip</option>
-                  </select>
-                  <div style="min-height: 29px;">&nbsp;</div>
+              <div class="row">
+                <div class="col-lg-6 col-sm-6 col-xs-12">
+                  <div class="panel panel-default">
+                    <div class="panel-heading">Mainhand</div>
+                    <div class="panel-body">
+                      <select class="form-control">
+                        <optgroup label="One-Handed">
+                          <option>Battle Axe</option>
+                          <option>Club</option>
+                          <option>Dagger</option>
+                          <option>Flail</option>
+                          <option>Hatchet</option>
+                          <option>Mace</option>
+                          <option>Rapier</option>
+                          <option>Sabre</option>
+                          <option>Spear</option>
+                          <option>Stiletto</option>
+                          <option>Sword</option>
+                          <option>War Hammer</option>
+                        </optgroup>
+                        <optgroup label="Two-Handed Melee">
+                          <option>Estoc</option>
+                          <option>Great Sword</option>
+                          <option>Morning Star</option>
+                          <option>Pike</option>
+                          <option>Pollaxe</option>
+                          <option>Quarterstaff</option>
+                        </optgroup>
+                        <optgroup label="Two-Handed Ranged">
+                          <option>Arbalest</option>
+                          <option>Arquebus</option>
+                          <option>Blunderbuss</option>
+                          <option>Crossbow</option>
+                          <option>Hunting Bow</option>
+                          <option>Pistol</option>
+                          <option>Rod</option>
+                          <option>Sceptre</option>
+                          <option>Wand</option>
+                          <option>War Bow</option>
+                        </optgroup>
+                      </select>
+                      <div class="checkbox">
+                        <label><input type="checkbox"> Is Durganized</label>
+                      </div>
+                      <div class="checkbox">
+                        <label><input type="checkbox"> Has Speed <span class="text-muted">(enchant)</span></label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-lg-6 col-sm-6 col-xs-12">
+                  <div class="panel panel-default">
+                    <div class="panel-heading">Offhand</div>
+                    <div class="panel-body">
+                      <select class="form-control">
+                        <optgroup label="Shields">
+                          <option>Shield</option>
+                          <option>Shield with Bash</option>                    
+                        </optgroup>
+                        <optgroup label="One-Handed">
+                          <option>Battle Axe</option>
+                          <option>Club</option>
+                          <option>Dagger</option>
+                          <option>Flail</option>
+                          <option>Hatchet</option>
+                          <option>Mace</option>
+                          <option>Rapier</option>
+                          <option>Sabre</option>
+                          <option>Spear</option>
+                          <option>Stiletto</option>
+                          <option>Sword</option>
+                          <option>War Hammer</option>
+                        </optgroup>
+                      </select>
+                      <div class="checkbox">
+                        <label><input type="checkbox"> Is Durganized</label>
+                      </div>
+                      <div class="checkbox">
+                        <label><input type="checkbox"> Has Speed <span class="text-muted">(enchant)</span></label>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
+              <div class="clearfix"></div>
             </div>
           </div>
-          <div class="row">
-            <div class="col-lg-3 col-sm-6 col-xs-12">
-              <div class="panel panel-default">
-                <div class="panel-heading">Mainhand</div>
-                <div class="panel-body">
-                  <select class="form-control">
-                    <optgroup label="One-Handed">
-                      <option>Battle Axe</option>
-                      <option>Club</option>
-                      <option>Dagger</option>
-                      <option>Flail</option>
-                      <option>Hatchet</option>
-                      <option>Mace</option>
-                      <option>Rapier</option>
-                      <option>Sabre</option>
-                      <option>Spear</option>
-                      <option>Stiletto</option>
-                      <option>Sword</option>
-                      <option>War Hammer</option>
-                    </optgroup>
-                    <optgroup label="Two-Handed Melee">
-                      <option>Estoc</option>
-                      <option>Great Sword</option>
-                      <option>Morning Star</option>
-                      <option>Pike</option>
-                      <option>Pollaxe</option>
-                      <option>Quarterstaff</option>
-                    </optgroup>
-                    <optgroup label="Two-Handed Ranged">
-                      <option>Arbalest</option>
-                      <option>Arquebus</option>
-                      <option>Blunderbuss</option>
-                      <option>Crossbow</option>
-                      <option>Hunting Bow</option>
-                      <option>Pistol</option>
-                      <option>Rod</option>
-                      <option>Sceptre</option>
-                      <option>Wand</option>
-                      <option>War Bow</option>
-                    </optgroup>
-                  </select>
-                  <div class="checkbox">
-                    <label><input type="checkbox"> Is Durganized</label>
+
+          <div class="col-lg-6 col-md-6 col-xs-12" style="float: right;">
+            <h3>Buffs & Effects</h3>
+            <div class="well">        
+              <div class="row">
+                <div class="col-lg-6 col-sm-6 col-xs-12">
+                  <div class="panel panel-default">
+                    <div class="panel-heading">AttackSpeedMult <span class="badge badge-info">&nbsp;</span></div>
+                    <div class="panel-body">
+                      <input class="effect-checkbox" type="checkbox" data-toggle="toggle" data-on="Anitlei (Zahua passive)" data-off="Anitlei (Zahua passive)" data-onstyle="info" data-width="100%"/>
+                      <input class="effect-checkbox" type="checkbox" data-toggle="toggle" data-on="Bloodlust" data-off="Bloodlust" data-onstyle="info" data-width="100%"/>
+                      <input class="effect-checkbox" type="checkbox" data-toggle="toggle" data-on="Cautious Attack" data-off="Cautious Attack" data-onstyle="info" data-width="100%"/>
+                      <input class="effect-checkbox" type="checkbox" data-toggle="toggle" data-on="DAoM Potion" data-off="DAoM Potion" data-onstyle="info" data-width="100%"/>
+                      <input class="effect-checkbox" type="checkbox" data-toggle="toggle" data-on="Frenzy" data-off="Frenzy" data-onstyle="info" data-width="100%"/>
+                      <input class="effect-checkbox" type="checkbox" data-toggle="toggle" data-on="Nature's Bounty" data-off="Nature's Bounty" data-onstyle="info" data-width="100%"/>
+                      <input class="effect-checkbox" type="checkbox" data-toggle="toggle" data-on="Outlander's Frenzy" data-off="Outlander's Frenzy" data-onstyle="info" data-width="100%"/>
+                      <input class="effect-checkbox" type="checkbox" data-toggle="toggle" data-on="Potion of Power" data-off="Potion of Power" data-onstyle="info" data-width="100%"/>
+                      <input class="effect-checkbox" type="checkbox" data-toggle="toggle" data-on="Svef" data-off="Svef" data-onstyle="info" data-width="100%"/>
+                      <input class="effect-checkbox" type="checkbox" data-toggle="toggle" data-on="Swift Aim" data-off="Swift Aim" data-onstyle="info" data-width="100%"/>
+                      <input class="effect-checkbox" type="checkbox" data-toggle="toggle" data-on="Swift Strikes" data-off="Swift Strikes" data-onstyle="info" data-width="100%"/>
+                      <input class="effect-checkbox" type="checkbox" data-toggle="toggle" data-on="Their Champion Chant" data-off="Their Champion Chant" data-onstyle="info" data-width="100%"/>
+                      <input class="effect-checkbox" type="checkbox" data-toggle="toggle" data-on="Time Parasite" data-off="Time Parasite" data-onstyle="info" data-width="100%"/>
+                      <input class="effect-checkbox" type="checkbox" data-toggle="toggle" data-on="Viello Vidorio" data-off="Viello Vidorio" data-onstyle="info" data-width="100%"/>
+                    </div>
                   </div>
-                  <div class="checkbox">
-                    <label><input type="checkbox"> Has Speed <span class="text-muted">(enchant)</span></label>
+                </div>
+                <div class="col-lg-6 col-sm-6 col-xs-12">
+                  <div class="panel panel-default">
+                    <div class="panel-heading">MeleeAttackSpeedMult <span class="badge badge-info">&nbsp;</span></div>
+                    <div class="panel-body">
+                      <input class="effect-checkbox" type="checkbox" data-toggle="toggle" data-on="Vulnerable Attack" data-off="Vulnerable Attack" data-onstyle="info" data-width="100%"/>
+                    </div>
+                  </div>
+                  <div class="panel panel-default">
+                    <div class="panel-heading">RangedAttackSpeedMult <span class="badge badge-info">&nbsp;</span></div>
+                    <div class="panel-body">
+                      <input class="effect-checkbox" type="checkbox" data-toggle="toggle" data-on="Penetrating Shot" data-off="Penetrating Shot" data-onstyle="info" data-width="100%"/>
+                    </div>
+                  </div>
+                  <div class="panel panel-default">
+                    <div class="panel-heading">RateOfFireMult <span class="badge badge-info">&nbsp;</span></div>
+                    <div class="panel-body">
+                      <input class="effect-checkbox" type="checkbox" data-toggle="toggle" data-on="Sure-Handed Chant" data-off="Sure-Handed Chant" data-onstyle="info" data-width="100%"/>
+                      <input class="effect-checkbox" type="checkbox" data-toggle="toggle" data-on="Vicious Aim" data-off="Vicious Aim" data-onstyle="info" data-width="100%"/>
+                    </div>
+                  </div>
+                  <div class="panel panel-default">
+                    <div class="panel-heading">ReloadSpeedCoef <span class="badge badge-info-alt">&nbsp;</span></div>
+                    <div class="panel-body">
+                      <input class="effect-checkbox" type="checkbox" data-toggle="toggle" data-on="Gunner" data-off="Gunner" data-onstyle="info-alt" data-width="100%"/>
+                      <input class="effect-checkbox" type="checkbox" data-toggle="toggle" data-on="Sure-Handed Chant" data-off="Sure-Handed Chant" data-onstyle="info-alt" data-width="100%"/>
+                      <input class="effect-checkbox" type="checkbox" data-toggle="toggle" data-on="Swift Aim" data-off="Swift Aim" data-onstyle="info-alt" data-width="100%"/>
+                      <input class="effect-checkbox" type="checkbox" data-toggle="toggle" data-on="Vicious Aim" data-off="Vicious Aim" data-onstyle="info-alt" data-width="100%"/>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-            <div class="col-lg-3 col-sm-6 col-xs-12">
-              <div class="panel panel-default">
-                <div class="panel-heading">Offhand</div>
-                <div class="panel-body">
-                  <select class="form-control">
-                    <optgroup label="Shields">
-                      <option>Shield</option>
-                      <option>Shield with Bash</option>                    
-                    </optgroup>
-                    <optgroup label="One-Handed">
-                      <option>Battle Axe</option>
-                      <option>Club</option>
-                      <option>Dagger</option>
-                      <option>Flail</option>
-                      <option>Hatchet</option>
-                      <option>Mace</option>
-                      <option>Rapier</option>
-                      <option>Sabre</option>
-                      <option>Spear</option>
-                      <option>Stiletto</option>
-                      <option>Sword</option>
-                      <option>War Hammer</option>
-                    </optgroup>
-                  </select>
-                  <div class="checkbox">
-                    <label><input type="checkbox"> Is Durganized</label>
-                  </div>
-                  <div class="checkbox">
-                    <label><input type="checkbox"> Has Speed <span class="text-muted">(enchant)</span></label>
-                  </div>
-                </div>
-              </div>
-            </div>
+            </div>  
           </div>
-          <div class="clearfix"></div>
+          
+          <div class="col-lg-6 col-md-6 col-xs-12">
+            <h3>Result</h3>
+            <blockquote style="padding-right: 0;">
+              <div class="progress">
+                <div class="progress-bar progress-bar-success" style="width: 30%"></div>
+                <div class="progress-bar progress-bar-warning" style="width: 50%"></div>
+                <div class="progress-bar progress-bar-danger" style="width: 0%"></div>
+              </div>
+              <small>Base values: <cite title="Speed">attack: 30f, recovery: 50f</cite></small>
+            </blockquote>
+            <blockquote style="padding-right: 0;">
+              <div class="progress">
+                <div class="progress-bar progress-bar-success" style="width: 30%"></div>
+                <div class="progress-bar progress-bar-warning" style="width: 20%"></div>
+                <div class="progress-bar progress-bar-danger" style="width: 0%"></div>
+              </div>
+              <small>Final values: <cite title="Speed">attack: 30f, recovery: 20f</cite></small>
+            </blockquote>
+          </div>  
         </div>
-        <h3>Buffs & Effects</h3>
-        <div class="well">
-          <input type="checkbox" data-toggle="toggle" data-on="Bloodlust" data-off="Bloodlust" data-onstyle="info"/>
-        </div>
-        
-        <h3>Buffs & Effects</h3>
-        <div class="well">        
-          <div class="row">
-            <div class="col-lg-3 col-sm-6 col-xs-12">
-              <div class="panel panel-default">
-                <div class="panel-heading">AttackSpeedMult <span class="badge badge-info">&nbsp;</span></div>
-                <div class="panel-body">
-                  <input class="effect-checkbox" type="checkbox" data-toggle="toggle" data-on="Anitlei (Zahua passive)" data-off="Anitlei (Zahua passive)" data-onstyle="info" data-width="100%"/>
-                  <input class="effect-checkbox" type="checkbox" data-toggle="toggle" data-on="Bloodlust" data-off="Bloodlust" data-onstyle="info" data-width="100%"/>
-                  <input class="effect-checkbox" type="checkbox" data-toggle="toggle" data-on="Cautious Attack" data-off="Cautious Attack" data-onstyle="info" data-width="100%"/>
-                  <input class="effect-checkbox" type="checkbox" data-toggle="toggle" data-on="Deleterious Alacrity of Motion" data-off="Deleterious Alacrity of Motion" data-onstyle="info" data-width="100%"/>
-                  <input class="effect-checkbox" type="checkbox" data-toggle="toggle" data-on="Frenzy" data-off="Frenzy" data-onstyle="info" data-width="100%"/>
-                  <input class="effect-checkbox" type="checkbox" data-toggle="toggle" data-on="Nature's Bounty" data-off="Nature's Bounty" data-onstyle="info" data-width="100%"/>
-                  <input class="effect-checkbox" type="checkbox" data-toggle="toggle" data-on="Outlander's Frenzy" data-off="Outlander's Frenzy" data-onstyle="info" data-width="100%"/>
-                  <input class="effect-checkbox" type="checkbox" data-toggle="toggle" data-on="Potion of Power" data-off="Potion of Power" data-onstyle="info" data-width="100%"/>
-                  <input class="effect-checkbox" type="checkbox" data-toggle="toggle" data-on="Svef" data-off="Svef" data-onstyle="info" data-width="100%"/>
-                  <input class="effect-checkbox" type="checkbox" data-toggle="toggle" data-on="Swift Aim" data-off="Swift Aim" data-onstyle="info" data-width="100%"/>
-                  <input class="effect-checkbox" type="checkbox" data-toggle="toggle" data-on="Swift Strikes" data-off="Swift Strikes" data-onstyle="info" data-width="100%"/>
-                  <input class="effect-checkbox" type="checkbox" data-toggle="toggle" data-on="Their Champion Chant" data-off="Their Champion Chant" data-onstyle="info" data-width="100%"/>
-                  <input class="effect-checkbox" type="checkbox" data-toggle="toggle" data-on="Time Parasite" data-off="Time Parasite" data-onstyle="info" data-width="100%"/>
-                  <input class="effect-checkbox" type="checkbox" data-toggle="toggle" data-on="Viello Vidorio" data-off="Viello Vidorio" data-onstyle="info" data-width="100%"/>
-                </div>
-              </div>
-            </div>
-            <div class="col-lg-3 col-sm-6 col-xs-12">
-              <div class="panel panel-default">
-                <div class="panel-heading">MeleeAttackSpeedMult <span class="badge badge-info">&nbsp;</span></div>
-                <div class="panel-body">
-                  <input class="effect-checkbox" type="checkbox" data-toggle="toggle" data-on="Vulnerable Attack" data-off="Vulnerable Attack" data-onstyle="info" data-width="100%"/>
-                </div>
-              </div>
-            </div>
-            <div class="col-lg-3 col-sm-6 col-xs-12">
-              <div class="panel panel-default">
-                <div class="panel-heading">RangedAttackSpeedMult <span class="badge badge-info">&nbsp;</span></div>
-                <div class="panel-body">
-                  <input class="effect-checkbox" type="checkbox" data-toggle="toggle" data-on="Penetrating Shot" data-off="Penetrating Shot" data-onstyle="info" data-width="100%"/>
-                </div>
-              </div>
-            </div>
-            <div class="col-lg-3 col-sm-6 col-xs-12">
-              <div class="panel panel-default">
-                <div class="panel-heading">RateOfFireMult <span class="badge badge-info">&nbsp;</span></div>
-                <div class="panel-body">
-                  <input class="effect-checkbox" type="checkbox" data-toggle="toggle" data-on="Sure-Handed Ila Chant" data-off="Sure-Handed Ila Chant" data-onstyle="info" data-width="100%"/>
-                  <input class="effect-checkbox" type="checkbox" data-toggle="toggle" data-on="Vicious Aim" data-off="Vicious Aim" data-onstyle="info" data-width="100%"/>
-                </div>
-              </div>
-            </div>
-            <div class="col-lg-3 col-sm-6 col-xs-12">
-              <div class="panel panel-default">
-                <div class="panel-heading">ReloadSpeedCoef <span class="badge badge-info">&nbsp;</span></div>
-                <div class="panel-body">
-                  <input class="effect-checkbox" type="checkbox" data-toggle="toggle" data-on="Gunner" data-off="Gunner" data-onstyle="info" data-width="100%"/>
-                  <input class="effect-checkbox" type="checkbox" data-toggle="toggle" data-on="Sure-Handed Ila Chant" data-off="Sure-Handed Ila Chant" data-onstyle="info" data-width="100%"/>
-                  <input class="effect-checkbox" type="checkbox" data-toggle="toggle" data-on="Swift Aim" data-off="Swift Aim" data-onstyle="info" data-width="100%"/>
-                  <input class="effect-checkbox" type="checkbox" data-toggle="toggle" data-on="Vicious Aim" data-off="Vicious Aim" data-onstyle="info" data-width="100%"/>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>  
-        
       </form>
     </div>
     
