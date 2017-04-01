@@ -18,6 +18,9 @@
     <script type="text/javascript" src="https://rawgit.com/naijaro/poe-speed-calculator/master/js/test.js"></script>
     -->
     <style media="screen" type="text/css">
+      .hidden {
+        display: none;
+      }
       .navbar {
         margin-bottom: 10px;
       }
@@ -37,7 +40,7 @@
       .result-docked-top #results-pin {
         display: block;
       }
-      .result-docked-top #result-block {
+      .result-docked-top #results-block {
         position: fixed;
         top: 0;
         right: 0;
@@ -48,7 +51,7 @@
         background-image: linear-gradient(#484e55, #3a3f44 60%, #313539);
         border: 1px solid rgba(0,0,0,0.6);
       }
-      .result-docked-top #result-block h3 {
+      .result-docked-top #results-block h3 {
         display: none;
       }
       .result-docked-top #result-values {
@@ -115,6 +118,24 @@
       }
       .panel > .panel-heading .badge-info-alt {
         background-color: #915bde ;
+      }
+      
+      #weapons-row .weapon-col {
+        float: none;
+        display: inline-block;
+
+        -webkit-transition: width 500ms;
+                transition: width 500ms;
+      }
+      #weapons-row.inline {
+        white-space: nowrap;
+      }      
+      #weapons-row.two-handed .weapon-col {
+        width: 100%;
+      }
+      .weapon-col.abs-right {
+        position: absolute;
+        right: 0;
       }
       
       @media all and (max-width: 767px) {
@@ -191,8 +212,8 @@
                   </div>
                 </div>
               </div>
-              <div class="row">
-                <div class="col-lg-6 col-sm-6 col-xs-12">
+              <div class="row" id="weapons-row" style="position: relative; overflow: hidden;">
+                <div class="col-lg-6 col-sm-6 col-xs-12 weapon-col" id="mainhand-col">
                   <div class="panel panel-default">
                     <div class="panel-heading">Mainhand</div>
                     <div class="panel-body">
@@ -205,8 +226,8 @@
                       </div>
                     </div>
                   </div>
-                </div>
-                <div class="col-lg-6 col-sm-6 col-xs-12">
+                </div
+               ><div class="col-lg-6 col-sm-6 col-xs-12 weapon-col" id="offhand-col">
                   <div class="panel panel-default">
                     <div class="panel-heading">Offhand</div>
                     <div class="panel-body">
@@ -282,7 +303,7 @@
               </div>
             </div>  
           </div>          
-          <div class="col-lg-6 col-md-6 col-xs-12" id="result-block">            
+          <div class="col-lg-6 col-md-6 col-xs-12" id="results-block">            
             <h3 class="block-title">Result</h3>
             <div id="result-values">
               <i class="glyphicon glyphicon-pushpin" id="results-pin"></i>
@@ -292,18 +313,37 @@
                   <div class="progress-bar progress-bar-success mh-attack" style="width: 25%" title="Attack duration"></div>
                   <div class="progress-bar progress-bar-warning mh-recovery" style="width: 41.6667%;" title="Recovery duration"></div>
                   <div class="progress-bar progress-bar-danger  mh-reload" style="width: 0%" title="Reload duration"></div>
-                  <div class="progress-bar progress-bar-success oh-attack" style="width: 0%" title="Attack duration"></div>
-                  <div class="progress-bar progress-bar-warning oh-recovery" style="width: 0%;" title="Recovery duration"></div>
+                  <div class="progress-bar progress-bar-success oh-attack hidden" style="width: 0%" title="Attack duration"></div>
+                  <div class="progress-bar progress-bar-warning oh-recovery hidden" style="width: 0%;" title="Recovery duration"></div>
                 </div>
-                <small>Base values: <cite title="Speed">attack: <span class="mh-attack-value">30</span>f, recovery: <span class="mh-recovery-value">50</span>f</cite></small>
+                <small>Base values (at 10 DEX): 
+                  <cite title="Speed">
+                    <span class="mh-attack-result">attack: <span class="value">30f</span></span><span 
+                          class="mh-recovery-result">, recovery: <span class="value">50f</span></span><span 
+                          class="mh-reload-result hidden">, reload: <span class="value">150f</span></span><span 
+                          class="oh-attack-result hidden">, attack: <span class="value">30f</span></span><span 
+                          class="oh-recovery-result hidden">, recovery: <span class="value">50f</span></span>
+                  </cite>
+                </small>
               </blockquote>
-              <blockquote style="padding-right: 0;">
+              <blockquote style="padding-right: 0;" id="final-results-block">
                 <div class="progress">
-                  <div class="progress-bar progress-bar-success" id="final-attack" style="width: 25%"></div>
-                  <div class="progress-bar progress-bar-warning" id="final-recovery" style="width: 41.6667%;"></div>
-                  <div class="progress-bar progress-bar-danger" id="final-reload" style="width: 0%"></div>
+                  <div class="progress-bar                      mh-delay"  style="width: 4%" title="Delay (4-5 frames)"></div>
+                  <div class="progress-bar progress-bar-success mh-attack" style="width: 25%" title="Attack duration"></div>
+                  <div class="progress-bar progress-bar-warning mh-recovery" style="width: 41.6667%;" title="Recovery duration"></div>
+                  <div class="progress-bar progress-bar-danger  mh-reload" style="width: 0%" title="Reload duration"></div>
+                  <div class="progress-bar progress-bar-success oh-attack hidden" style="width: 0%" title="Attack duration"></div>
+                  <div class="progress-bar progress-bar-warning oh-recovery hidden" style="width: 0%;" title="Recovery duration"></div>
                 </div>
-                <small>Final values: <cite title="Speed">attack: 30f, recovery: 50f</cite></small>
+                <small>Final values: 
+                  <cite title="Speed">
+                    <span class="mh-attack-result">attack: <span class="value">30f</span></span><span 
+                          class="mh-recovery-result">, recovery: <span class="value">50f</span></span><span 
+                          class="mh-reload-result hidden">, reload: <span class="value">150f</span></span><span 
+                          class="oh-attack-result hidden">, attack: <span class="value">30f</span></span><span 
+                          class="oh-recovery-result hidden">, recovery: <span class="value">50f</span></span>
+                  </cite>
+                </small>
               </blockquote>
             </div>
           </div>  
@@ -367,6 +407,14 @@
       
       var $MAINHAND_SELECT;
       var $OFFHAND_SELECT;
+      var $WEAPONS_ROW;
+      
+      var MH_WIELDABLE = GetWieldableById(1);
+      var OH_WIELDABLE = GetWieldableById(SHIELD_ID);
+      
+      var IS_2H_SETUP;
+      var IS_DW_SETUP;
+      var IS_OFFHAND_ATTACKING;
       
       function Init()
       {
@@ -378,6 +426,7 @@
       {
         $MAINHAND_SELECT = $('#mainhand-select');
         $OFFHAND_SELECT = $('#offhand-select');
+        $WEAPONS_ROW = $('#weapons-row');
         
         PopulateWeaponSelects();
         BindEvents();
@@ -390,22 +439,90 @@
         });
         
         $MAINHAND_SELECT.on('change', function() {
-          var selectedValue = this.value;
-          var wieldable = GetWieldableById(selectedValue);
-          
-          PopulateBaseResults({
-            mh: {
-              attack: wieldable.attackDuration,
-              recovery: Math.round(100 * wieldable.attackDuration / 0.6) / 100,
-              reload: wieldable.reloadDuration
-            }            
-          });
+          OnMainhandChange(this.value);
+        });
+        
+        $OFFHAND_SELECT.on('change', function() {
+          OnOffhandChange(this.value);
         });
       }
 
       /* ****************************** EVENTS ****************************** */
 
-
+      function OnMainhandChange(wieldableId)
+      {
+        MH_WIELDABLE = GetWieldableById(wieldableId);
+        
+        UpdateSetupConfig();
+        PopulateBaseResults(GetBaseValues());
+      }
+      
+      function OnOffhandChange(wieldableId)
+      {
+        OH_WIELDABLE = GetWieldableById(wieldableId);
+        
+        UpdateSetupConfig();        
+        PopulateBaseResults(GetBaseValues());
+      }
+      
+      function GetBaseValues()
+      {
+        var values = [];
+        
+        if (MH_WIELDABLE != null)
+        {
+          var mhRecovery = Math.round(100 * MH_WIELDABLE.attackDuration / 0.6) / 100;
+              mhRecovery/= IS_DW_SETUP ? 2 : 1; 
+          
+          values.mh = {
+            attack: MH_WIELDABLE.attackDuration,
+            recovery: mhRecovery,
+            reload: MH_WIELDABLE.reloadDuration
+          };
+        }
+        
+        if (IS_OFFHAND_ATTACKING)
+        {
+          var ohRecovery = Math.round(100 * OH_WIELDABLE.attackDuration / 0.6 / 2) / 100;
+          
+          values.oh = {
+            attack: OH_WIELDABLE.attackDuration,
+            recovery: ohRecovery,
+            reload: null
+          };
+        }
+        
+        return values;
+      }
+      
+      function UpdateSetupConfig()
+      {
+        var was2H = IS_2H_SETUP;
+        
+        IS_2H_SETUP = MH_WIELDABLE.category == WIELDABLE_CATEGORIES.twoHandedMelee ||
+                      MH_WIELDABLE.category == WIELDABLE_CATEGORIES.twoHandedRanged;
+        
+        IS_DW_SETUP = MH_WIELDABLE.category == WIELDABLE_CATEGORIES.oneHanded &&
+                      OH_WIELDABLE.category == WIELDABLE_CATEGORIES.oneHanded &&
+                     !IS_2H_SETUP;
+        
+        IS_OFFHAND_ATTACKING = (OH_WIELDABLE.category == WIELDABLE_CATEGORIES.oneHanded ||
+                                OH_WIELDABLE.id == BASHING_SHIELD_ID) && !IS_2H_SETUP;
+                
+        if (!was2H && IS_2H_SETUP)
+          $WEAPONS_ROW.addClass('two-handed inline');
+        
+        if (was2H && !IS_2H_SETUP)
+        {
+          $WEAPONS_ROW.removeClass('two-handed');
+          setTimeout(function(){ $WEAPONS_ROW.removeClass('inline'); }, 500);
+        }
+        
+        var $block = $('#results-block');
+        $block.find('.oh-attack').toggleClass('hidden', !IS_OFFHAND_ATTACKING);
+        $block.find('.oh-recovery').toggleClass('hidden', !IS_OFFHAND_ATTACKING);
+      }
+      
       /* ****************************** GETTERS ***************************** */
 
       function GenWieldable(category, attackDuration, title, reloadDuration, forcedId)
@@ -507,6 +624,7 @@
         
         var delay = 5;
         var maxDurationCoef = data.oh && data.oh.attack ? 2 : 1;
+        maxDurationCoef = 1;
         var maxDuration = maxDurationCoef * ATTACK_DURATION_LG * 16 / 6 + delay;
         
         var mhAttack= data.mh && data.mh.attack ? data.mh.attack : 0;
@@ -514,7 +632,7 @@
         var mhReload = data.mh && data.mh.reload ? data.mh.reload : 0;
         
         if (mhReload > 0)
-          maxDuration+= 250;        
+          maxDuration+= 250;
         
         var ohAttack = data.oh && data.oh.attack ? data.oh.attack : 0;
         var ohRecovery = data.oh && data.oh.recovery ? data.oh.recovery : 0;
@@ -524,8 +642,18 @@
         $block.find('.mh-recovery').width(GetPercStr(mhRecovery / maxDuration));
         $block.find('.mh-reload').width(GetPercStr(mhReload / maxDuration));
         
-        $block.find('.mh-attack-value').html(data.mh.attack);
-        $block.find('.mh-recovery-value').html(data.mh.recovery);
+        $block.find('.oh-attack').width(GetPercStr(ohAttack / maxDuration));
+        $block.find('.oh-recovery').width(GetPercStr(ohRecovery / maxDuration));
+        
+        $block.find('.mh-attack-result .value').html(Math.round(mhAttack * 100) / 100);
+        $block.find('.mh-recovery-result .value').html(Math.round(mhRecovery * 100) / 100);
+        $block.find('.mh-reload-result .value').html(Math.round(mhReload * 100) / 100);
+        $block.find('.oh-attack-result .value').html(Math.round(ohAttack * 100) / 100);
+        $block.find('.oh-recovery-result .value').html(Math.round(ohRecovery * 100) / 100);
+        
+        $block.find('.mh-reload-result').toggleClass('hidden', mhReload <= 0);
+        $block.find('.oh-attack-result').toggleClass('hidden', !IS_OFFHAND_ATTACKING);
+        $block.find('.oh-recovery-result').toggleClass('hidden', !IS_OFFHAND_ATTACKING);
         
         $block.find('.progress').animate({ opacity: 0.5 }, 300)
                                 .animate({ opacity: 1.0 }, 300);
