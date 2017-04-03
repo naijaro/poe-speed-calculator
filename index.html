@@ -138,6 +138,13 @@
         right: 0;
       }
       
+      .toggle.suppressed .toggle-on {
+        background-image: linear-gradient(#a6a6a7, #79797d 60%, #707171);
+      }
+      .toggle.suppressed .toggle-on:hover {        
+        background-image: linear-gradient(#8d8d8e, #5d5d5f 60%, #565656);
+      }
+      
       @media all and (max-width: 767px) {
         #page-title {
           text-align: center;
@@ -167,29 +174,29 @@
     </div>
     <div class="container">
       <h1 id="page-title">Speed Calculator</h1>
-      <p id="page-info">version 0.4 (Alpha) <a class="text-muted" href="https://forums.obsidian.net/user/160416-maxquest/">by MaxQuest</a></p>     
+      <p id="page-info">version 0.6 (Alpha) <a class="text-muted" href="https://forums.obsidian.net/user/160416-maxquest/">by MaxQuest</a></p>     
       <form class="form-horizontal" id="main-form">
         <div class="row">
           <div class="col-lg-6 col-md-6 col-xs-12">
             <h3 class="block-title">Equipment</h3>
             <div class="well">
               <div class="row">
-                <div class="col-lg-6 col-sm-6 col-xs-12">
+                <div class="col-lg-6 col-sm-6 col-xs-12" id="armor-col">
                   <div class="panel panel-default">
                     <div class="panel-heading">Armor Type</div>
                     <div class="panel-body">
                       <select class="form-control">
-                        <option>Naked</option>
-                        <option>Cloth</option>
-                        <option>Robe</option>
-                        <option>Padded</option>
-                        <option>Hide</option>
-                        <option>Leather</option>
-                        <option>Scale</option>
-                        <option>Breastplate</option>
-                        <option>Mail</option>
-                        <option>Brigandine</option>
-                        <option>Plate</option>
+                        <option value="0">Naked</option>
+                        <option value="0">Cloth</option>
+                        <option value="0.15">Robe</option>
+                        <option value="0.20">Padded</option>
+                        <option value="0.25">Hide</option>
+                        <option value="0.30">Leather</option>
+                        <option value="0.35">Scale</option>
+                        <option value="0.40">Breastplate</option>
+                        <option value="0.45">Mail</option>
+                        <option value="0.50">Brigandine</option>
+                        <option value="0.50">Plate</option>
                       </select>
                       <div class="checkbox">
                         <label><input type="checkbox"> Is Durganized</label>
@@ -197,7 +204,7 @@
                     </div>
                   </div>
                 </div>
-                <div class="col-lg-6 col-sm-6 col-xs-12">
+                <div class="col-lg-6 col-sm-6 col-xs-12" id="gloves-col">
                   <div class="panel panel-default">
                     <div class="panel-heading">Gloves</div>
                     <div class="panel-body">
@@ -245,59 +252,32 @@
               <div class="clearfix"></div>
             </div>
           </div>
-          <div class="col-lg-6 col-md-6 col-xs-12" style="float: right;">
+          <div class="col-lg-6 col-md-6 col-xs-12"  id="effects-block" style="float: right;">
             <h3 class="block-title">Buffs & Effects</h3>
             <div class="well">        
               <div class="row">
                 <div class="col-lg-6 col-sm-6 col-xs-12">
-                  <div class="panel panel-default">
+                  <div class="panel panel-default panel-effects" data-id="AttackSpeedMult">
                     <div class="panel-heading">AttackSpeedMult <span class="badge badge-info">&nbsp;</span></div>
-                    <div class="panel-body">
-                      <input class="effect-checkbox" type="checkbox" data-toggle="toggle" data-on="Anitlei (Zahua passive)" data-off="Anitlei (Zahua passive)" data-onstyle="info" data-width="100%"/>
-                      <input class="effect-checkbox" type="checkbox" data-toggle="toggle" data-on="Bloodlust" data-off="Bloodlust" data-onstyle="info" data-width="100%"/>
-                      <input class="effect-checkbox" type="checkbox" data-toggle="toggle" data-on="Cautious Attack" data-off="Cautious Attack" data-onstyle="info" data-width="100%"/>
-                      <input class="effect-checkbox" type="checkbox" data-toggle="toggle" data-on="DAoM Potion" data-off="DAoM Potion" data-onstyle="info" data-width="100%"/>
-                      <input class="effect-checkbox" type="checkbox" data-toggle="toggle" data-on="Frenzy" data-off="Frenzy" data-onstyle="info" data-width="100%"/>
-                      <input class="effect-checkbox" type="checkbox" data-toggle="toggle" data-on="Nature's Bounty" data-off="Nature's Bounty" data-onstyle="info" data-width="100%"/>
-                      <input class="effect-checkbox" type="checkbox" data-toggle="toggle" data-on="Outlander's Frenzy" data-off="Outlander's Frenzy" data-onstyle="info" data-width="100%"/>
-                      <input class="effect-checkbox" type="checkbox" data-toggle="toggle" data-on="Potion of Power" data-off="Potion of Power" data-onstyle="info" data-width="100%"/>
-                      <input class="effect-checkbox" type="checkbox" data-toggle="toggle" data-on="Svef" data-off="Svef" data-onstyle="info" data-width="100%"/>
-                      <input class="effect-checkbox" type="checkbox" data-toggle="toggle" data-on="Swift Aim" data-off="Swift Aim" data-onstyle="info" data-width="100%"/>
-                      <input class="effect-checkbox" type="checkbox" data-toggle="toggle" data-on="Swift Strikes" data-off="Swift Strikes" data-onstyle="info" data-width="100%"/>
-                      <input class="effect-checkbox" type="checkbox" data-toggle="toggle" data-on="Their Champion Chant" data-off="Their Champion Chant" data-onstyle="info" data-width="100%"/>
-                      <input class="effect-checkbox" type="checkbox" data-toggle="toggle" data-on="Time Parasite" data-off="Time Parasite" data-onstyle="info" data-width="100%"/>
-                      <input class="effect-checkbox" type="checkbox" data-toggle="toggle" data-on="Viello Vidorio" data-off="Viello Vidorio" data-onstyle="info" data-width="100%"/>
-                    </div>
+                    <div class="panel-body"></div>
                   </div>
                 </div>
                 <div class="col-lg-6 col-sm-6 col-xs-12">
-                  <div class="panel panel-default">
+                  <div class="panel panel-default panel-effects" data-id="MeleeAttackSpeedMult">
                     <div class="panel-heading">MeleeAttackSpeedMult <span class="badge badge-info">&nbsp;</span></div>
-                    <div class="panel-body">
-                      <input class="effect-checkbox" type="checkbox" data-toggle="toggle" data-on="Vulnerable Attack" data-off="Vulnerable Attack" data-onstyle="info" data-width="100%"/>
-                    </div>
+                    <div class="panel-body"></div>
                   </div>
-                  <div class="panel panel-default">
+                  <div class="panel panel-default panel-effects" data-id="RangedAttackSpeedMult">
                     <div class="panel-heading">RangedAttackSpeedMult <span class="badge badge-info">&nbsp;</span></div>
-                    <div class="panel-body">
-                      <input class="effect-checkbox" type="checkbox" data-toggle="toggle" data-on="Penetrating Shot" data-off="Penetrating Shot" data-onstyle="info" data-width="100%"/>
-                    </div>
+                    <div class="panel-body"></div>
                   </div>
-                  <div class="panel panel-default">
+                  <div class="panel panel-default panel-effects" data-id="RateOfFireMult">
                     <div class="panel-heading">RateOfFireMult <span class="badge badge-info">&nbsp;</span></div>
-                    <div class="panel-body">
-                      <input class="effect-checkbox" type="checkbox" data-toggle="toggle" data-on="Sure-Handed Chant" data-off="Sure-Handed Chant" data-onstyle="info" data-width="100%"/>
-                      <input class="effect-checkbox" type="checkbox" data-toggle="toggle" data-on="Vicious Aim" data-off="Vicious Aim" data-onstyle="info" data-width="100%"/>
-                    </div>
+                    <div class="panel-body"></div>
                   </div>
-                  <div class="panel panel-default">
+                  <div class="panel panel-default panel-effects" data-id="ReloadSpeedCoef">
                     <div class="panel-heading">ReloadSpeedCoef <span class="badge badge-info-alt">&nbsp;</span></div>
-                    <div class="panel-body">
-                      <input class="effect-checkbox" type="checkbox" data-toggle="toggle" data-on="Gunner" data-off="Gunner" data-onstyle="info-alt" data-width="100%"/>
-                      <input class="effect-checkbox" type="checkbox" data-toggle="toggle" data-on="Sure-Handed Chant" data-off="Sure-Handed Chant" data-onstyle="info-alt" data-width="100%"/>
-                      <input class="effect-checkbox" type="checkbox" data-toggle="toggle" data-on="Swift Aim" data-off="Swift Aim" data-onstyle="info-alt" data-width="100%"/>
-                      <input class="effect-checkbox" type="checkbox" data-toggle="toggle" data-on="Vicious Aim" data-off="Vicious Aim" data-onstyle="info-alt" data-width="100%"/>
-                    </div>
+                    <div class="panel-body"></div>
                   </div>
                 </div>
               </div>
@@ -402,7 +382,7 @@
         GenWieldable(WIELDABLE_CATEGORIES.twoHandedRanged, ATTACK_DURATION_LG, "War Bow"),
         
         GenWieldable(WIELDABLE_CATEGORIES.shields, null, "Shield", null, SHIELD_ID),
-        GenWieldable(WIELDABLE_CATEGORIES.shields, ATTACK_DURATION_XS, "Shield with Bash", null, BASHING_SHIELD_ID)
+        GenWieldable(WIELDABLE_CATEGORIES.shields, ATTACK_DURATION_SM, "Shield with Bash", null, BASHING_SHIELD_ID)
       ];
       
       var $MAINHAND_SELECT;
@@ -415,6 +395,54 @@
       var IS_2H_SETUP;
       var IS_DW_SETUP;
       var IS_OFFHAND_ATTACKING;
+      
+      var EFFECT_CATEGORIES = {
+        attackSpeedMult: 'AttackSpeedMult',
+        meleeAttackSpeedMult: 'MeleeAttackSpeedMult',
+        rangedAttackSpeedMult: 'RangedAttackSpeedMult',
+        rateOfFireMult: 'RateOfFireMult',
+        reloadSpeedCoef: 'ReloadSpeedCoef'
+      };
+      
+      var SUPPRESING_CATEGORIES = {
+        attackSpeedMult1: 'AttackSpeedMult1',
+        reloadSpeedCoef1: 'ReloadSpeedCoef1'
+      };
+      
+     var EFFECT_COEFFICIENTS = {
+        melee: {},
+        ranged: {}
+      };
+      
+      var EFFECTS = [
+        GenEffect(EFFECT_CATEGORIES.attackSpeedMult, 1.10, "Anitlei (Zahua passive)"),
+        GenEffect(EFFECT_CATEGORIES.attackSpeedMult, 1.20, "Bloodlust"),
+        GenEffect(EFFECT_CATEGORIES.attackSpeedMult, 0.80, "Cautious Attack"),
+        GenEffect(EFFECT_CATEGORIES.attackSpeedMult, 1.50, "DAoM Potion", SUPPRESING_CATEGORIES.attackSpeedMult1),
+        GenEffect(EFFECT_CATEGORIES.attackSpeedMult, 1.33, "Frenzy", SUPPRESING_CATEGORIES.attackSpeedMult1),
+        // GenEffect(EFFECT_CATEGORIES.attackSpeedMult, 1.25, "Hastening Exhortation", SUPPRESING_CATEGORIES.attackSpeedMult1),
+        GenEffect(EFFECT_CATEGORIES.attackSpeedMult, 1.20, "Nature's Bounty", SUPPRESING_CATEGORIES.attackSpeedMult1),
+        GenEffect(EFFECT_CATEGORIES.attackSpeedMult, 1.25, "Outlander's Frenzy", SUPPRESING_CATEGORIES.attackSpeedMult1),
+        GenEffect(EFFECT_CATEGORIES.attackSpeedMult, 1.25, "Potion of Power", SUPPRESING_CATEGORIES.attackSpeedMult1),
+        GenEffect(EFFECT_CATEGORIES.attackSpeedMult, 1.15, "Svef", SUPPRESING_CATEGORIES.attackSpeedMult1),
+        GenEffect(EFFECT_CATEGORIES.attackSpeedMult, 1.20, "Swift Aim", SUPPRESING_CATEGORIES.attackSpeedMult1),
+        GenEffect(EFFECT_CATEGORIES.attackSpeedMult, 1.20, "Swift Strikes", SUPPRESING_CATEGORIES.attackSpeedMult1),
+        GenEffect(EFFECT_CATEGORIES.attackSpeedMult, 1.40, "Their Champion Chant", SUPPRESING_CATEGORIES.attackSpeedMult1),
+        GenEffect(EFFECT_CATEGORIES.attackSpeedMult, 1.50, "Time Parasite", SUPPRESING_CATEGORIES.attackSpeedMult1),
+        GenEffect(EFFECT_CATEGORIES.attackSpeedMult, 1.20, "Vielo Vidorio", SUPPRESING_CATEGORIES.attackSpeedMult1),
+        
+        GenEffect(EFFECT_CATEGORIES.meleeAttackSpeedMult, 0.80, "Vulnerable Attack"),        
+        GenEffect(EFFECT_CATEGORIES.rangedAttackSpeedMult, 0.80, "Penetrating Shot"),        
+        GenEffect(EFFECT_CATEGORIES.rateOfFireMult, 1.20, "Sure-Handed Chant"),
+        GenEffect(EFFECT_CATEGORIES.rateOfFireMult, 0.80, "Vicious Aim"),
+        
+        GenEffect(EFFECT_CATEGORIES.reloadSpeedCoef, 1.20, "Gunner"),
+        GenEffect(EFFECT_CATEGORIES.reloadSpeedCoef, 1.20, "Sure-Handed Chant", SUPPRESING_CATEGORIES.reloadSpeedCoef1),
+        GenEffect(EFFECT_CATEGORIES.reloadSpeedCoef, 1.50, "Swift Aim", SUPPRESING_CATEGORIES.reloadSpeedCoef1),
+        GenEffect(EFFECT_CATEGORIES.reloadSpeedCoef, 0.80, "Vicious Aim")
+      ];
+      
+      var ENABLED_EFFECTS = {};
       
       function Init()
       {
@@ -429,6 +457,7 @@
         $WEAPONS_ROW = $('#weapons-row');
         
         PopulateWeaponSelects();
+        PopulateEffects();
         BindEvents();
       }
 
@@ -445,8 +474,28 @@
         $OFFHAND_SELECT.on('change', function() {
           OnOffhandChange(this.value);
         });
+        
+        $('.panel-effects .effect-checkbox').change(function() {
+          var $checkbox = $(this);
+          var isChecked = $checkbox.prop('checked');
+          var effect = GetEffectById($checkbox.data('id'));
+          
+          if (isChecked)
+            ENABLED_EFFECTS[effect.id] = effect;
+          else
+            delete ENABLED_EFFECTS[effect.id];
+          
+          if (effect.suppressingCategory)
+            UpdateSuppression();
+          
+          // console.log('ENABLED_EFFECTS', ENABLED_EFFECTS);
+          
+          UpdateEffectCoefficients();
+          
+          // console.log('EFFECT_COEFFICIENTS', EFFECT_COEFFICIENTS);
+        });
       }
-
+      
       /* ****************************** EVENTS ****************************** */
 
       function OnMainhandChange(wieldableId)
@@ -495,34 +544,6 @@
         return values;
       }
       
-      function UpdateSetupConfig()
-      {
-        var was2H = IS_2H_SETUP;
-        
-        IS_2H_SETUP = MH_WIELDABLE.category == WIELDABLE_CATEGORIES.twoHandedMelee ||
-                      MH_WIELDABLE.category == WIELDABLE_CATEGORIES.twoHandedRanged;
-        
-        IS_DW_SETUP = MH_WIELDABLE.category == WIELDABLE_CATEGORIES.oneHanded &&
-                      OH_WIELDABLE.category == WIELDABLE_CATEGORIES.oneHanded &&
-                     !IS_2H_SETUP;
-        
-        IS_OFFHAND_ATTACKING = (OH_WIELDABLE.category == WIELDABLE_CATEGORIES.oneHanded ||
-                                OH_WIELDABLE.id == BASHING_SHIELD_ID) && !IS_2H_SETUP;
-                
-        if (!was2H && IS_2H_SETUP)
-          $WEAPONS_ROW.addClass('two-handed inline');
-        
-        if (was2H && !IS_2H_SETUP)
-        {
-          $WEAPONS_ROW.removeClass('two-handed');
-          setTimeout(function(){ $WEAPONS_ROW.removeClass('inline'); }, 500);
-        }
-        
-        var $block = $('#results-block');
-        $block.find('.oh-attack').toggleClass('hidden', !IS_OFFHAND_ATTACKING);
-        $block.find('.oh-recovery').toggleClass('hidden', !IS_OFFHAND_ATTACKING);
-      }
-      
       /* ****************************** GETTERS ***************************** */
 
       function GenWieldable(category, attackDuration, title, reloadDuration, forcedId)
@@ -544,6 +565,44 @@
             return WIELDABLES[i];
         
         return null;
+      }
+      
+      function GenEffect(category, value, title, suppressingCategory, forcedId)
+      {
+        VARS.EFFECT_ID = forcedId || VARS.EFFECT_ID || 1;
+        return {
+          id: VARS.EFFECT_ID++,
+          title: title,
+          value: value,
+          category: category,          
+          suppressingCategory: suppressingCategory || null,
+          suppressed: false
+        };
+      }
+      
+      function GetEffectById(id)
+      {
+        for (var i in EFFECTS)
+          if (EFFECTS[i].id == id)
+            return EFFECTS[i];
+        
+        return null;
+      }
+      
+      function GetEnabledEffectsCoefficients(category)
+      {
+        var coefficients = [];
+        var effect = null;
+        
+        for (var i in ENABLED_EFFECTS)
+        {
+          effect = ENABLED_EFFECTS[i];
+          
+          if (effect.category == category && effect.suppressed == false)
+            coefficients.push(effect.value);
+        }
+        
+        return coefficients;
       }
       
       function GetBaseResultsBlock()
@@ -590,6 +649,39 @@
         PopulateWieldableSelect($OFFHAND_SELECT, categories, WIELDABLES); 
       }
       
+      function PopulateEffects()
+      {
+        PopulateEffectsPanel(EFFECT_CATEGORIES.attackSpeedMult);
+        PopulateEffectsPanel(EFFECT_CATEGORIES.meleeAttackSpeedMult);
+        PopulateEffectsPanel(EFFECT_CATEGORIES.rangedAttackSpeedMult);
+        PopulateEffectsPanel(EFFECT_CATEGORIES.rateOfFireMult);
+        PopulateEffectsPanel(EFFECT_CATEGORIES.reloadSpeedCoef, 'info-alt');
+      }
+      
+      function PopulateEffectsPanel(category, style)
+      {
+        var $panel = $('.panel-effects[data-id="' + category + '"]');
+        var style = style || 'info';
+        var effectsHtml = '';
+        
+        for (var i in EFFECTS)
+        {
+          var effect = EFFECTS[i];
+          
+          if (effect.category == category)
+            effectsHtml+= 
+              '<input class="effect-checkbox" type="checkbox" ' + 
+                     'data-id="' + effect.id + '"' +
+                     'data-toggle="toggle" ' + 
+                     'data-on="' + effect.title + '" ' + 
+                     'data-off="' + effect.title + '" ' + 
+                     'data-onstyle="' + style + '" ' + 
+                     'data-width="100%"/>';
+        }
+        $panel.find('.panel-body').html(effectsHtml);
+        $panel.find('.panel-body input').bootstrapToggle();
+      }
+      
       function PopulateWieldableSelect($select, categories, vars)
       {
         for (var i in categories)
@@ -610,22 +702,23 @@
         } 
       }
       
-      function PopulateBaseResults(data) {
+      function PopulateBaseResults(data) 
+      {
         PopulateResults(data, GetBaseResultsBlock());
       }
       
-      function PopulateFinalResults(data) {
+      function PopulateFinalResults(data) 
+      {
         PopulateResults(data, GetFinalResultsBlock());
       }
       
-      function PopulateResults(data, $block) {
+      function PopulateResults(data, $block) 
+      {
         if (!data || !$block)
           return;
         
         var delay = 5;
-        var maxDurationCoef = data.oh && data.oh.attack ? 2 : 1;
-        maxDurationCoef = 1;
-        var maxDuration = maxDurationCoef * ATTACK_DURATION_LG * 16 / 6 + delay;
+        var maxDuration = ATTACK_DURATION_LG * 16 / 6 + delay;
         
         var mhAttack= data.mh && data.mh.attack ? data.mh.attack : 0;
         var mhRecovery = data.mh && data.mh.recovery ? data.mh.recovery : 0;
@@ -645,11 +738,11 @@
         $block.find('.oh-attack').width(GetPercStr(ohAttack / maxDuration));
         $block.find('.oh-recovery').width(GetPercStr(ohRecovery / maxDuration));
         
-        $block.find('.mh-attack-result .value').html(Math.round(mhAttack * 100) / 100);
-        $block.find('.mh-recovery-result .value').html(Math.round(mhRecovery * 100) / 100);
-        $block.find('.mh-reload-result .value').html(Math.round(mhReload * 100) / 100);
-        $block.find('.oh-attack-result .value').html(Math.round(ohAttack * 100) / 100);
-        $block.find('.oh-recovery-result .value').html(Math.round(ohRecovery * 100) / 100);
+        $block.find('.mh-attack-result .value').html(GetRoundedValue(mhAttack));
+        $block.find('.mh-recovery-result .value').html(GetRoundedValue(mhRecovery));
+        $block.find('.mh-reload-result .value').html(GetRoundedValue(mhReload));
+        $block.find('.oh-attack-result .value').html(GetRoundedValue(ohAttack));
+        $block.find('.oh-recovery-result .value').html(GetRoundedValue(ohRecovery));
         
         $block.find('.mh-reload-result').toggleClass('hidden', mhReload <= 0);
         $block.find('.oh-attack-result').toggleClass('hidden', !IS_OFFHAND_ATTACKING);
@@ -659,11 +752,131 @@
                                 .animate({ opacity: 1.0 }, 300);
       }
       
+      function UpdateSetupConfig() 
+      {
+        var was2H = IS_2H_SETUP;
+        
+        IS_2H_SETUP = MH_WIELDABLE.category == WIELDABLE_CATEGORIES.twoHandedMelee ||
+                      MH_WIELDABLE.category == WIELDABLE_CATEGORIES.twoHandedRanged;
+        
+        IS_DW_SETUP = MH_WIELDABLE.category == WIELDABLE_CATEGORIES.oneHanded &&
+                      OH_WIELDABLE.category == WIELDABLE_CATEGORIES.oneHanded &&
+                     !IS_2H_SETUP;
+        
+        IS_OFFHAND_ATTACKING = (OH_WIELDABLE.category == WIELDABLE_CATEGORIES.oneHanded ||
+                                OH_WIELDABLE.id == BASHING_SHIELD_ID) && !IS_2H_SETUP;
+                
+        if (!was2H && IS_2H_SETUP)
+          $WEAPONS_ROW.addClass('two-handed inline');
+        
+        if (was2H && !IS_2H_SETUP)
+        {
+          $WEAPONS_ROW.removeClass('two-handed');
+          setTimeout(function(){ $WEAPONS_ROW.removeClass('inline'); }, 500);
+        }
+        
+        var $block = $('#results-block');
+        $block.find('.oh-attack').toggleClass('hidden', !IS_OFFHAND_ATTACKING);
+        $block.find('.oh-recovery').toggleClass('hidden', !IS_OFFHAND_ATTACKING);
+      }
+      
+      function UpdateSuppression()
+      {
+        var $effectsBlock = $('#effects-block');
+        
+        for (var i in SUPPRESING_CATEGORIES)
+        {
+          var suppressingCategory = SUPPRESING_CATEGORIES[i];
+          var unsuppresedEffect = null;
+          
+          for (var j in ENABLED_EFFECTS)
+          {
+            var effect = ENABLED_EFFECTS[j];
+            
+            if (effect.suppressingCategory == suppressingCategory)
+            {
+              if (unsuppresedEffect == null ||
+                 (effect.value > 1 && effect.value > unsuppresedEffect.value) ||
+                 (effect.value < 1 && effect.value < unsuppresedEffect.value))
+                unsuppresedEffect = effect;
+            }
+          }
+          
+          for (var j in ENABLED_EFFECTS)
+          {
+            var effect = ENABLED_EFFECTS[j];            
+            if (effect.suppressingCategory != suppressingCategory)
+              continue;               
+            
+            var $checkbox = $effectsBlock.find('.effect-checkbox[data-id="' + effect.id + '"]');
+            var $toggle = $checkbox.parent();
+            var isSuppressed = effect.id != unsuppresedEffect.id;
+            
+            ENABLED_EFFECTS[j].suppressed = isSuppressed;
+            $toggle.toggleClass('suppressed', isSuppressed);
+          }
+        }
+      }
+      
+      function UpdateEffectCoefficients()
+      {
+        var meleeCategories = [
+          EFFECT_CATEGORIES.attackSpeedMult,
+          EFFECT_CATEGORIES.meleeAttackSpeedMult
+        ];
+        
+        var rangedCategories = [
+          EFFECT_CATEGORIES.attackSpeedMult,
+          EFFECT_CATEGORIES.rangedAttackSpeedMult,
+          EFFECT_CATEGORIES.rateOfFireMult,
+          EFFECT_CATEGORIES.reloadSpeedCoef
+        ];
+        
+        UpdateEffectCoefficientsByRange('melee', meleeCategories);
+        UpdateEffectCoefficientsByRange('ranged', rangedCategories);
+      }
+      
+      function UpdateEffectCoefficientsByRange(range, categories)
+      {
+        for (var i in categories)
+          EFFECT_COEFFICIENTS[range][categories[i]] = MultArrayValues(GetEnabledEffectsCoefficients(categories[i]));        
+      }
+      
       /* ****************************** UTILS ******************************* */
+      
+      function IsWieldableRanged(wieldable)
+      {
+        return wieldable != null && wieldable.category == WIELDABLE_CATEGORIES.twoHandedRanged;
+      }
       
       function GetPercStr(floatVal)
       {
         return (floatVal * 100) + '%';
+      }
+      
+      function GetRoundedValue(floatVal)
+      {
+        return Math.round(floatVal * 100) / 100;
+      }
+      
+      function AddArrayValues(arr)
+      {
+        var foo = 0;
+        
+        for (var i in arr)
+          foo+= arr[i];
+        
+        return foo;
+      }
+      
+      function MultArrayValues(arr)
+      {
+        var foo = 1;
+        
+        for (var i in arr)
+          foo*= arr[i];
+        
+        return foo;
       }
       
       /* ******************************************************************** */
