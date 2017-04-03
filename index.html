@@ -136,13 +136,15 @@
       .weapon-col.abs-right {
         position: absolute;
         right: 0;
-      }
-      
+      }      
       .toggle.suppressed .toggle-on {
         background-image: linear-gradient(#a6a6a7, #79797d 60%, #707171);
       }
       .toggle.suppressed .toggle-on:hover {        
         background-image: linear-gradient(#8d8d8e, #5d5d5f 60%, #565656);
+      }      
+      .progress-bar.oh-attack {
+        opacity: 0.8;
       }
       
       @media all and (max-width: 767px) {
@@ -177,7 +179,7 @@
       <p id="page-info">version 0.6 (Alpha) <a class="text-muted" href="https://forums.obsidian.net/user/160416-maxquest/">by MaxQuest</a></p>     
       <form class="form-horizontal" id="main-form">
         <div class="row">
-          <div class="col-lg-6 col-md-6 col-xs-12">
+          <div class="col-lg-6 col-md-6 col-xs-12" id="equipment-block">
             <h3 class="block-title">Equipment</h3>
             <div class="well">
               <div class="row">
@@ -199,7 +201,10 @@
                         <option value="0.50">Plate</option>
                       </select>
                       <div class="checkbox">
-                        <label><input type="checkbox"> Is Durganized</label>
+                        <label><input type="checkbox" class="property" data-prop="durganized"> Is Durganized</label>
+                      </div>
+                      <div class="checkbox">
+                        <label><input type="checkbox" class="property" data-prop="armored_grace"> Armored Grace</label>
                       </div>
                     </div>
                   </div>
@@ -226,10 +231,10 @@
                     <div class="panel-body">
                       <select class="form-control" id="mainhand-select"></select>
                       <div class="checkbox">
-                        <label><input type="checkbox"> Is Durganized</label>
+                        <label><input type="checkbox" class="property" data-prop="durganized"> Is Durganized</label>
                       </div>
                       <div class="checkbox">
-                        <label><input type="checkbox"> Has Speed <span class="text-muted">(enchant)</span></label>
+                        <label><input type="checkbox" class="property" data-prop="speed"> Has Speed <span class="text-muted">(enchant)</span></label>
                       </div>
                     </div>
                   </div>
@@ -240,10 +245,10 @@
                     <div class="panel-body">
                       <select class="form-control" id="offhand-select"></select>
                       <div class="checkbox">
-                        <label><input type="checkbox"> Is Durganized</label>
+                        <label><input type="checkbox" class="property" data-prop="durganized"> Is Durganized</label>
                       </div>
                       <div class="checkbox">
-                        <label><input type="checkbox"> Has Speed <span class="text-muted">(enchant)</span></label>
+                        <label><input type="checkbox" class="property" data-prop="speed"> Has Speed <span class="text-muted">(enchant)</span></label>
                       </div>
                     </div>
                   </div>
@@ -252,7 +257,7 @@
               <div class="clearfix"></div>
             </div>
           </div>
-          <div class="col-lg-6 col-md-6 col-xs-12"  id="effects-block" style="float: right;">
+          <div class="col-lg-6 col-md-6 col-xs-12" id="effects-block" style="float: right;">
             <h3 class="block-title">Buffs & Effects</h3>
             <div class="well">        
               <div class="row">
@@ -459,6 +464,9 @@
         PopulateWeaponSelects();
         PopulateEffects();
         BindEvents();
+        
+        UpdateEffectCoefficients();
+        UpdateResults(); 
       }
 
       function BindEvents()
@@ -475,6 +483,16 @@
           OnOffhandChange(this.value);
         });
         
+        $('.armor-col select').on('change', function() {
+          // TODO OnArmorChange
+          UpdateResults();
+        });
+        
+        $('#equipment-block .property[type="checkbox"]').on('change', function() {
+          console.log('checkbox toggle');
+          UpdateResults();
+        });
+        
         $('.panel-effects .effect-checkbox').change(function() {
           var $checkbox = $(this);
           var isChecked = $checkbox.prop('checked');
@@ -487,12 +505,9 @@
           
           if (effect.suppressingCategory)
             UpdateSuppression();
-          
-          // console.log('ENABLED_EFFECTS', ENABLED_EFFECTS);
-          
+                    
           UpdateEffectCoefficients();
-          
-          // console.log('EFFECT_COEFFICIENTS', EFFECT_COEFFICIENTS);
+          UpdateResults(); 
         });
       }
       
@@ -503,47 +518,17 @@
         MH_WIELDABLE = GetWieldableById(wieldableId);
         
         UpdateSetupConfig();
-        PopulateBaseResults(GetBaseValues());
+        UpdateResults(); 
       }
       
       function OnOffhandChange(wieldableId)
       {
         OH_WIELDABLE = GetWieldableById(wieldableId);
         
-        UpdateSetupConfig();        
-        PopulateBaseResults(GetBaseValues());
+        UpdateSetupConfig();
+        UpdateResults();        
       }
-      
-      function GetBaseValues()
-      {
-        var values = [];
-        
-        if (MH_WIELDABLE != null)
-        {
-          var mhRecovery = Math.round(100 * MH_WIELDABLE.attackDuration / 0.6) / 100;
-              mhRecovery/= IS_DW_SETUP ? 2 : 1; 
-          
-          values.mh = {
-            attack: MH_WIELDABLE.attackDuration,
-            recovery: mhRecovery,
-            reload: MH_WIELDABLE.reloadDuration
-          };
-        }
-        
-        if (IS_OFFHAND_ATTACKING)
-        {
-          var ohRecovery = Math.round(100 * OH_WIELDABLE.attackDuration / 0.6 / 2) / 100;
-          
-          values.oh = {
-            attack: OH_WIELDABLE.attackDuration,
-            recovery: ohRecovery,
-            reload: null
-          };
-        }
-        
-        return values;
-      }
-      
+            
       /* ****************************** GETTERS ***************************** */
 
       function GenWieldable(category, attackDuration, title, reloadDuration, forcedId)
@@ -844,11 +829,172 @@
           EFFECT_COEFFICIENTS[range][categories[i]] = MultArrayValues(GetEnabledEffectsCoefficients(categories[i]));        
       }
       
+      function UpdateResults()
+      {
+        PopulateBaseResults(ComputeBaseValues());
+        PopulateFinalResults(ComputeFinalValues());
+      }
+      
+      /* ******************************************************************** */
+      
+      function ComputeBaseValues()
+      {
+        var values = [];
+        
+        if (MH_WIELDABLE != null)
+        {
+          var mhRecovery = Math.round(100 * MH_WIELDABLE.attackDuration / 0.6) / 100;
+              mhRecovery/= IS_DW_SETUP ? 2 : 1; 
+          
+          values.mh = {
+            attack: MH_WIELDABLE.attackDuration,
+            recovery: mhRecovery,
+            reload: MH_WIELDABLE.reloadDuration
+          };
+        }
+        
+        if (IS_OFFHAND_ATTACKING)
+        {
+          var ohRecovery = Math.round(100 * OH_WIELDABLE.attackDuration / 0.6 / 2) / 100;
+          
+          values.oh = {
+            attack: OH_WIELDABLE.attackDuration,
+            recovery: ohRecovery,
+            reload: null
+          };
+        }
+        
+        return values;
+      }
+      
+      function ComputeFinalValues()
+      {
+        var values = ComputeBaseValues();
+        var cats = EFFECT_CATEGORIES;
+        var coefs = IsWieldableRanged(MH_WIELDABLE) ? EFFECT_COEFFICIENTS.ranged
+                                                    : EFFECT_COEFFICIENTS.melee;
+                                                    
+        if (values.mh && values.mh.reload && coefs[cats.reloadSpeedCoef])
+          values.mh.reload/= coefs[cats.reloadSpeedCoef];
+        
+        var speedCoefMH = ComputeMainhandSpeedCoef();
+        var speedCoefOH = ComputeOffhandSpeedCoef();               
+        
+        var recoveryCoefMH = Math.max(0, 1 - 2 * speedCoefMH) / 1.2;
+        var recoveryCoefOH = Math.max(0, 1 - 2 * speedCoefOH) / 1.2;
+        
+        console.log('speedCoefMH', speedCoefMH);
+        console.log('speedCoefOH', speedCoefOH);
+        console.log('recoveryCoefMH', recoveryCoefMH);
+        console.log('recoveryCoefOH', recoveryCoefOH);
+        
+        if (values.mh && values.mh.attack)
+          values.mh.recovery = values.mh.attack * recoveryCoefMH; 
+        
+        if (values.oh && values.oh.attack)
+          values.oh.recovery = values.oh.attack * recoveryCoefOH; 
+        
+        console.log('values', values);
+        
+        return values;
+      }
+      
+      function ComputeMainhandSpeedCoef()
+      {
+        if (MH_WIELDABLE == null)
+          return 0;
+        
+        var speedCoef = 0;
+        var cats = EFFECT_CATEGORIES;
+        var coefs = IsWieldableRanged(MH_WIELDABLE) ? EFFECT_COEFFICIENTS.ranged
+                                                    : EFFECT_COEFFICIENTS.melee;
+        var coefficients = jQuery.extend(true, {}, coefs);
+        
+        var $container = $('#mainhand-col');
+        var isDurganized = $container.find('.property[data-prop="durganized"]').is(':checked');
+        var hasSpeed = $container.find('.property[data-prop="speed"]').is(':checked');
+        
+        for (var category in coefficients)
+        {
+          if (!IsMultiplicativeRecoveryCategory(category))
+            continue;
+          
+          var coef = coefficients[category];
+
+          if (category == cats.attackSpeedMult && isDurganized)
+            coef*= 1.15;
+
+          if (category == cats.attackSpeedMult && hasSpeed)
+            coef*= 1.20;
+
+          speedCoef+= coef - 1;          
+        }
+        
+        if (!IS_DW_SETUP)
+        {
+          speedCoef-= HasDurganizedShieldInOffhand() ? 0.35 : 0.5;
+        }
+        
+        return speedCoef;
+      }
+      
+      function ComputeOffhandSpeedCoef()
+      {
+        if (OH_WIELDABLE == null)
+          return 0;
+        
+        var speedCoef = 0;
+        var cats = EFFECT_CATEGORIES;
+        var coefs = IsWieldableRanged(OH_WIELDABLE) ? EFFECT_COEFFICIENTS.ranged
+                                                    : EFFECT_COEFFICIENTS.melee;
+        var coefficients = jQuery.extend(true, {}, coefs);
+        
+        var $container = $('#offhand-col');
+        var isDurganized = $container.find('.property[data-prop="durganized"]').is(':checked');
+        var hasSpeed = $container.find('.property[data-prop="speed"]').is(':checked');
+        
+        for (var category in coefficients)
+        {
+          if (!IsMultiplicativeRecoveryCategory(category))
+            continue;
+          
+          var coef = coefficients[category];
+
+          if (category == cats.attackSpeedMult && isDurganized && OH_WIELDABLE.category != WIELDABLE_CATEGORIES.shields)
+            coef*= 1.15;
+
+          if (category == cats.attackSpeedMult && hasSpeed && OH_WIELDABLE != WIELDABLE_CATEGORIES.shields)
+            coef*= 1.20;
+
+          speedCoef+= coef - 1;          
+        }
+                
+        return speedCoef;
+      }
+      
       /* ****************************** UTILS ******************************* */
       
       function IsWieldableRanged(wieldable)
       {
         return wieldable != null && wieldable.category == WIELDABLE_CATEGORIES.twoHandedRanged;
+      }
+      
+      function IsMultiplicativeRecoveryCategory(category)
+      {
+        return $.inArray(category, [
+          EFFECT_CATEGORIES.attackSpeedMult,
+          EFFECT_CATEGORIES.meleeAttackSpeedMult,
+          EFFECT_CATEGORIES.rangedAttackSpeedMult,
+          EFFECT_CATEGORIES.rateOfFireMult
+        ]) >= 0;
+      }
+      
+      function HasDurganizedShieldInOffhand()
+      {
+        if (OH_WIELDABLE == null || OH_WIELDABLE.category != WIELDABLE_CATEGORIES.shields)
+          return false;
+
+        return $('#offhand-col .property[data-prop="durganized"]').is(':checked');
       }
       
       function GetPercStr(floatVal)
