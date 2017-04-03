@@ -14,10 +14,10 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
     
-    <!--
-    <script type="text/javascript" src="https://rawgit.com/naijaro/poe-speed-calculator/master/js/test.js"></script>
-    -->
     <style media="screen" type="text/css">
+      body {
+        overflow-y: scroll;
+      }
       .hidden {
         display: none;
       }
@@ -91,6 +91,10 @@
       .well {
         padding-bottom: 0;
       }
+      .form-control {
+        height: 28px;
+        padding: 4px 12px;
+      }
       .panel .toggle.btn {
         width: 100%;
         margin-bottom: 5px;
@@ -146,6 +150,13 @@
       .progress-bar.oh-attack {
         opacity: 0.8;
       }
+      .toggle.btn {
+        min-height: 30px;
+      }
+      
+      #gloves-col .placeholder {
+        min-height: 29px;
+      }
       
       @media all and (max-width: 767px) {
         #page-title {
@@ -159,6 +170,10 @@
         .block-title {
           text-align: center;
           margin: 0 0 20px;
+        }
+        #gloves-col .placeholder {
+          height: 0;
+          min-height: 0;
         }
         #results-pin {
           display: block;
@@ -176,7 +191,7 @@
     </div>
     <div class="container">
       <h1 id="page-title">Speed Calculator</h1>
-      <p id="page-info">version 0.6 (Alpha) <a class="text-muted" href="https://forums.obsidian.net/user/160416-maxquest/">by MaxQuest</a></p>     
+      <p id="page-info">version 0.8 (Alpha) <a class="text-muted" href="https://forums.obsidian.net/user/160416-maxquest/">by MaxQuest</a></p>     
       <form class="form-horizontal" id="main-form">
         <div class="row">
           <div class="col-lg-6 col-md-6 col-xs-12" id="equipment-block">
@@ -219,7 +234,7 @@
                         <option>Mourning Gloves</option>
                         <option>Pilferer's Grip</option>
                       </select>
-                      <div style="min-height: 29px;">&nbsp;</div>
+                      <div class="placeholder">&nbsp;</div>
                     </div>
                   </div>
                 </div>
@@ -268,6 +283,10 @@
                   </div>
                 </div>
                 <div class="col-lg-6 col-sm-6 col-xs-12">
+                  <div class="panel panel-default panel-effects" data-id="DualWieldAttackSpeedMult">
+                    <div class="panel-heading">DualWieldAttackSpeedMult <span class="badge badge-info">&nbsp;</span></div>
+                    <div class="panel-body"></div>
+                  </div>
                   <div class="panel panel-default panel-effects" data-id="MeleeAttackSpeedMult">
                     <div class="panel-heading">MeleeAttackSpeedMult <span class="badge badge-info">&nbsp;</span></div>
                     <div class="panel-body"></div>
@@ -403,6 +422,7 @@
       
       var EFFECT_CATEGORIES = {
         attackSpeedMult: 'AttackSpeedMult',
+        dualWieldAttackSpeedMult: 'DualWieldAttackSpeedMult',
         meleeAttackSpeedMult: 'MeleeAttackSpeedMult',
         rangedAttackSpeedMult: 'RangedAttackSpeedMult',
         rateOfFireMult: 'RateOfFireMult',
@@ -426,7 +446,7 @@
         GenEffect(EFFECT_CATEGORIES.attackSpeedMult, 0.80, "Cautious Attack"),
         GenEffect(EFFECT_CATEGORIES.attackSpeedMult, 1.50, "DAoM Potion", SUPPRESING_CATEGORIES.attackSpeedMult1),
         GenEffect(EFFECT_CATEGORIES.attackSpeedMult, 1.33, "Frenzy", SUPPRESING_CATEGORIES.attackSpeedMult1),
-        // GenEffect(EFFECT_CATEGORIES.attackSpeedMult, 1.25, "Hastening Exhortation", SUPPRESING_CATEGORIES.attackSpeedMult1),
+        GenEffect(EFFECT_CATEGORIES.attackSpeedMult, 1.25, "Hastening Exhortation", SUPPRESING_CATEGORIES.attackSpeedMult1),
         GenEffect(EFFECT_CATEGORIES.attackSpeedMult, 1.20, "Nature's Bounty", SUPPRESING_CATEGORIES.attackSpeedMult1),
         GenEffect(EFFECT_CATEGORIES.attackSpeedMult, 1.25, "Outlander's Frenzy", SUPPRESING_CATEGORIES.attackSpeedMult1),
         GenEffect(EFFECT_CATEGORIES.attackSpeedMult, 1.25, "Potion of Power", SUPPRESING_CATEGORIES.attackSpeedMult1),
@@ -437,7 +457,8 @@
         GenEffect(EFFECT_CATEGORIES.attackSpeedMult, 1.50, "Time Parasite", SUPPRESING_CATEGORIES.attackSpeedMult1),
         GenEffect(EFFECT_CATEGORIES.attackSpeedMult, 1.20, "Vielo Vidorio", SUPPRESING_CATEGORIES.attackSpeedMult1),
         
-        GenEffect(EFFECT_CATEGORIES.meleeAttackSpeedMult, 0.80, "Vulnerable Attack"),        
+        GenEffect(EFFECT_CATEGORIES.dualWieldAttackSpeedMult, 1.20, "Two-Weapon Style"), 
+        GenEffect(EFFECT_CATEGORIES.meleeAttackSpeedMult, 0.80, "Vulnerable Attack"), 
         GenEffect(EFFECT_CATEGORIES.rangedAttackSpeedMult, 0.80, "Penetrating Shot"),        
         GenEffect(EFFECT_CATEGORIES.rateOfFireMult, 1.20, "Sure-Handed Chant"),
         GenEffect(EFFECT_CATEGORIES.rateOfFireMult, 0.80, "Vicious Aim"),
@@ -466,7 +487,6 @@
         PopulateEffects();
         BindEvents();
         
-        UpdateEffectCoefficients();
         UpdateResults(); 
       }
 
@@ -504,8 +524,7 @@
           
           if (effect.suppressingCategory)
             UpdateSuppression();
-                    
-          UpdateEffectCoefficients();
+          
           UpdateResults(); 
         });
       }
@@ -636,6 +655,7 @@
       function PopulateEffects()
       {
         PopulateEffectsPanel(EFFECT_CATEGORIES.attackSpeedMult);
+        PopulateEffectsPanel(EFFECT_CATEGORIES.dualWieldAttackSpeedMult);
         PopulateEffectsPanel(EFFECT_CATEGORIES.meleeAttackSpeedMult);
         PopulateEffectsPanel(EFFECT_CATEGORIES.rangedAttackSpeedMult);
         PopulateEffectsPanel(EFFECT_CATEGORIES.rateOfFireMult);
@@ -660,7 +680,8 @@
                      'data-on="' + effect.title + '" ' + 
                      'data-off="' + effect.title + '" ' + 
                      'data-onstyle="' + style + '" ' + 
-                     'data-width="100%"/>';
+                     'data-width="100%" ' + 
+                     'data-height="30px"/>';
         }
         $panel.find('.panel-body').html(effectsHtml);
         $panel.find('.panel-body input').bootstrapToggle();
@@ -808,11 +829,13 @@
       {
         var meleeCategories = [
           EFFECT_CATEGORIES.attackSpeedMult,
+          EFFECT_CATEGORIES.dualWieldAttackSpeedMult,
           EFFECT_CATEGORIES.meleeAttackSpeedMult
         ];
         
         var rangedCategories = [
           EFFECT_CATEGORIES.attackSpeedMult,
+          EFFECT_CATEGORIES.dualWieldAttackSpeedMult,
           EFFECT_CATEGORIES.rangedAttackSpeedMult,
           EFFECT_CATEGORIES.rateOfFireMult,
           EFFECT_CATEGORIES.reloadSpeedCoef
@@ -825,11 +848,19 @@
       function UpdateEffectCoefficientsByRange(range, categories)
       {
         for (var i in categories)
-          EFFECT_COEFFICIENTS[range][categories[i]] = MultArrayValues(GetEnabledEffectsCoefficients(categories[i]));        
+        {
+          var category = categories[i];
+          
+          if (category == EFFECT_CATEGORIES.dualWieldAttackSpeedMult && !IS_DW_SETUP)
+            continue;
+          
+          EFFECT_COEFFICIENTS[range][category] = MultArrayValues(GetEnabledEffectsCoefficients(category));
+        }
       }
       
       function UpdateResults()
       {
+        UpdateEffectCoefficients();
         UpdateArmorPenaltyValue();
         PopulateBaseResults(ComputeBaseValues());
         PopulateFinalResults(ComputeFinalValues());
@@ -997,6 +1028,7 @@
       {
         return $.inArray(category, [
           EFFECT_CATEGORIES.attackSpeedMult,
+          EFFECT_CATEGORIES.dualWieldAttackSpeedMult,
           EFFECT_CATEGORIES.meleeAttackSpeedMult,
           EFFECT_CATEGORIES.rangedAttackSpeedMult,
           EFFECT_CATEGORIES.rateOfFireMult
