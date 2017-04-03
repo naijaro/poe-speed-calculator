@@ -315,7 +315,7 @@
                   <div class="progress-bar progress-bar-success oh-attack hidden" style="width: 0%" title="Attack duration"></div>
                   <div class="progress-bar progress-bar-warning oh-recovery hidden" style="width: 0%;" title="Recovery duration"></div>
                 </div>
-                <small>Final values: (TODO) 
+                <small>Final values (TODO): 
                   <cite title="Speed">
                     <span class="mh-attack-result">attack: <span class="value">30f</span></span><span 
                           class="mh-recovery-result">, recovery: <span class="value">50f</span></span><span 
@@ -811,9 +811,11 @@
             var $checkbox = $effectsBlock.find('.effect-checkbox[data-id="' + effect.id + '"]');
             var $toggle = $checkbox.parent();
             var isSuppressed = effect.id != unsuppresedEffect.id;
+            var title = isSuppressed ? 'Suppressed by ' + unsuppresedEffect.title : '';
             
             ENABLED_EFFECTS[j].suppressed = isSuppressed;
             $toggle.toggleClass('suppressed', isSuppressed);
+            $toggle.prop('title', title);
           }
         }
       }
