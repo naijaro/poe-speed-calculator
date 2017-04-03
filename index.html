@@ -185,7 +185,7 @@
               <div class="row">
                 <div class="col-lg-6 col-sm-6 col-xs-12" id="armor-col">
                   <div class="panel panel-default">
-                    <div class="panel-heading">Armor Type (TODO)</div>
+                    <div class="panel-heading">Armor Type</div>
                     <div class="panel-body">
                       <select class="form-control">
                         <option value="0">Naked</option>
@@ -414,7 +414,8 @@
         reloadSpeedCoef1: 'ReloadSpeedCoef1'
       };
       
-     var EFFECT_COEFFICIENTS = {
+      var ARMOR_PENALTY = 0;
+      var EFFECT_COEFFICIENTS = {
         melee: {},
         ranged: {}
       };
@@ -483,13 +484,11 @@
           OnOffhandChange(this.value);
         });
         
-        $('.armor-col select').on('change', function() {
-          // TODO OnArmorChange
+        $('#armor-col select').on('change', function() {
           UpdateResults();
         });
         
         $('#equipment-block .property[type="checkbox"]').on('change', function() {
-          console.log('checkbox toggle');
           UpdateResults();
         });
         
@@ -831,8 +830,23 @@
       
       function UpdateResults()
       {
+        UpdateArmorPenaltyValue();
         PopulateBaseResults(ComputeBaseValues());
         PopulateFinalResults(ComputeFinalValues());
+      }
+      
+      function UpdateArmorPenaltyValue()
+      {
+        var $container = $('#armor-col');        
+        var isDurganized = $container.find('.property[data-prop="durganized"]').is(':checked');
+        var withArmoredGrace = $container.find('.property[data-prop="armored_grace"]').is(':checked');
+        
+        var penalty = $container.find("select").val();
+        var foo = isDurganized ? 0.15 : 0;
+        var bar = withArmoredGrace ? 0.20 : 0;
+        
+        ARMOR_PENALTY = Math.max(0, penalty - foo - bar);
+        return ARMOR_PENALTY;
       }
       
       /* ******************************************************************** */
@@ -935,7 +949,7 @@
           speedCoef-= HasDurganizedShieldInOffhand() ? 0.35 : 0.5;
         }
         
-        return speedCoef;
+        return speedCoef - ARMOR_PENALTY;
       }
       
       function ComputeOffhandSpeedCoef()
@@ -969,7 +983,7 @@
           speedCoef+= coef - 1;          
         }
                 
-        return speedCoef;
+        return speedCoef - ARMOR_PENALTY;
       }
       
       /* ****************************** UTILS ******************************* */
