@@ -4,16 +4,28 @@
     <title>PoE Speed Calculator</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <link rel="author" href="https://www.reddit.com/user/MaxQuest/">
+    <link rel="publisher" href="https://www.reddit.com/user/MaxQuest/">
+    <meta property='og:locale' content='en_US'>
+    <meta property='og:title' content='Pillars of Eternity Speed Calculator'>
+    <meta property='og:description' content='Online tool for calculation of attack speed and recovery duration.'>
+    <meta property='og:url' content='https://naijaro.github.io/poe-speed-calculator'>
+    <meta property='og:site_name' content='POE Speed Calculator'>
+    <meta property='og:image' content='http://d1079ywfijtdjs.cloudfront.net/eternity/media/wallpapers/logo/pe-wallpaper-logo-936x526.jpg'>
+    
     <!--
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     -->
     <link rel="stylesheet" href="https://bootswatch.com/slate/bootstrap.min.css">
     <link rel="stylesheet" href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/9.2.0/nouislider.min.css">
     
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
-    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/9.2.0/nouislider.min.js"></script>
+       
     <style media="screen" type="text/css">
       body {
         overflow-y: scroll;
@@ -167,6 +179,46 @@
       }      
       #gloves-col .placeholder {
         min-height: 29px;
+      }
+      
+      .noUi-target {
+        border: 0 none;
+        outline: 0 none;
+        box-shadow: none;
+      }
+      .noUi-base {
+        background-color: #1c1e22;
+        border-radius: 0;
+        -webkit-box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
+                box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);        
+      }
+      .noUi-connect {
+        background: #62c462;
+      }
+      .noUi-marker-horizontal.noUi-marker {
+        margin-left: -1px;
+        width: 1px;
+        height: 4px;
+        background: #7a8288;
+      }
+      .noUi-marker-horizontal.noUi-marker-large {
+        height: 8px;
+      }
+      .noUi-value {
+        font-size: 75%;
+        line-height: 1.42857143;
+        color: #7a8288;
+      }
+      .noUi-handle {
+        background-color: #3e444c;
+        border-color: #171616;
+        box-shadow: none;
+      }
+      #base-dex-value,
+      #final-dex-value {
+        display: inline-block;        
+        min-width: 16px;
+        text-align: right;
       }
       
       @media all and (max-width: 767px) {
@@ -331,7 +383,7 @@
                   <div class="progress-bar progress-bar-success oh-attack hidden" style="width: 0%" title="Attack duration"></div>
                   <div class="progress-bar progress-bar-warning oh-recovery hidden" style="width: 0%;" title="Recovery duration"></div>
                 </div>
-                <small>Base values (at 10 DEX): 
+                <small>Base values (at <span id="base-dex-value">10</span> DEX): 
                   <cite title="Speed">
                     <span class="mh-attack-result">attack: <span class="value">30f</span></span><span 
                           class="mh-recovery-result">, recovery: <span class="value">50f</span></span><span 
@@ -350,7 +402,7 @@
                   <div class="progress-bar progress-bar-success oh-attack hidden" style="width: 0%" title="Attack duration"></div>
                   <div class="progress-bar progress-bar-warning oh-recovery hidden" style="width: 0%;" title="Recovery duration"></div>
                 </div>
-                <small>Final values (TODO): 
+                <small>Final values (at <span id="final-dex-value">10</span> DEX): 
                   <cite title="Speed">
                     <span class="mh-attack-result">attack: <span class="value">30f</span></span><span 
                           class="mh-recovery-result">, recovery: <span class="value">50f</span></span><span 
@@ -359,8 +411,12 @@
                           class="oh-recovery-result hidden">, recovery: <span class="value">50f</span></span>
                   </cite>
                 </small>
+                <br/>
+                <div id="dex-slider-wrap">
+                  <div id="dex-slider"></div>
+                </div>
               </blockquote>
-            </div>
+            </div>            
           </div>  
         </div>
       </form>
@@ -369,6 +425,8 @@
     (function($, undefined) {
 
       var VARS = {};
+      var MAX_ACTION_DURATION = 209;
+      
       var ATTACK_DURATION_XS = 19.09;
       var ATTACK_DURATION_SM = 20;
       var ATTACK_DURATION_MD = 30;
@@ -445,7 +503,10 @@
         reloadSpeedCoef1: 'ReloadSpeedCoef1'
       };
       
+      var CURRENT_DEX = 10;
       var ARMOR_PENALTY = 0;
+      var RESULTS_PER_BLOCK = {};
+      var PREVENT_RESULTS_BLINKING = false;
       var EFFECT_COEFFICIENTS = {
         melee: {},
         ranged: {}
@@ -462,7 +523,7 @@
         GenEffect(EFFECT_CATEGORIES.attackSpeedMult, 1.25, "Outlander's Frenzy", SUPPRESING_CATEGORIES.attackSpeedMult1),
         GenEffect(EFFECT_CATEGORIES.attackSpeedMult, 1.25, "Potion of Power", SUPPRESING_CATEGORIES.attackSpeedMult1),
         GenEffect(EFFECT_CATEGORIES.attackSpeedMult, 1.15, "Svef", SUPPRESING_CATEGORIES.attackSpeedMult1),
-        GenEffect(EFFECT_CATEGORIES.attackSpeedMult, 1.20, "Swift Aim", SUPPRESING_CATEGORIES.attackSpeedMult1),
+        GenEffect(EFFECT_CATEGORIES.attackSpeedMult, 1.20, "Swift Aim", SUPPRESING_CATEGORIES.attackSpeedMult1, null, true),
         GenEffect(EFFECT_CATEGORIES.attackSpeedMult, 1.20, "Swift Strikes", SUPPRESING_CATEGORIES.attackSpeedMult1),
         GenEffect(EFFECT_CATEGORIES.attackSpeedMult, 1.40, "Their Champion Chant", SUPPRESING_CATEGORIES.attackSpeedMult1),
         GenEffect(EFFECT_CATEGORIES.attackSpeedMult, 1.50, "Time Parasite", SUPPRESING_CATEGORIES.attackSpeedMult1),
@@ -472,12 +533,12 @@
         GenEffect(EFFECT_CATEGORIES.meleeAttackSpeedMult, 0.80, "Vulnerable Attack"), 
         GenEffect(EFFECT_CATEGORIES.rangedAttackSpeedMult, 0.80, "Penetrating Shot"),        
         GenEffect(EFFECT_CATEGORIES.rateOfFireMult, 1.20, "Sure-Handed Chant"),
-        GenEffect(EFFECT_CATEGORIES.rateOfFireMult, 0.80, "Vicious Aim"),
+        GenEffect(EFFECT_CATEGORIES.rateOfFireMult, 0.80, "Vicious Aim", null, null, true),
         
         GenEffect(EFFECT_CATEGORIES.reloadSpeedCoef, 1.20, "Gunner"),
         GenEffect(EFFECT_CATEGORIES.reloadSpeedCoef, 1.20, "Sure-Handed Chant", SUPPRESING_CATEGORIES.reloadSpeedCoef1),
-        GenEffect(EFFECT_CATEGORIES.reloadSpeedCoef, 1.50, "Swift Aim", SUPPRESING_CATEGORIES.reloadSpeedCoef1),
-        GenEffect(EFFECT_CATEGORIES.reloadSpeedCoef, 0.80, "Vicious Aim")
+        GenEffect(EFFECT_CATEGORIES.reloadSpeedCoef, 1.50, "Swift Aim", SUPPRESING_CATEGORIES.reloadSpeedCoef1, null, true),
+        GenEffect(EFFECT_CATEGORIES.reloadSpeedCoef, 0.80, "Vicious Aim", null, null, true)
       ];
       
       var GLOVES_EFFECTS = {
@@ -501,9 +562,38 @@
         
         PopulateWeaponSelects();
         PopulateEffects();
+        InitDexSlider();
         BindEvents();
         
         UpdateResults(); 
+      }
+
+      function InitDexSlider()
+      {
+        var slider = document.getElementById('dex-slider');
+        var sliderValue = document.getElementById('final-dex-value');
+
+        noUiSlider.create(slider, {
+          start: 10,
+          connect: [true, false],
+          step: 1,
+          range: {
+            'min': 2,
+            'max': 36
+          },
+          pips: {
+            mode: 'values',
+            values: [10, 20, 30],
+            density: 15
+          }
+        });
+        
+        slider.noUiSlider.on('update', function(values, handle) {
+          CURRENT_DEX = Math.round(values[handle]);
+          sliderValue.innerHTML = CURRENT_DEX;
+          PREVENT_RESULTS_BLINKING = true;
+          UpdateResults();
+        });
       }
 
       function BindEvents()
@@ -541,12 +631,32 @@
           UpdateResults();
         });
         
-        $('#effects-block').on('change', '.effect-checkbox', function() {
+        var $effectsBlock = $('#effects-block');
+        var lockPropagation = false;
+        $effectsBlock.on('change', '.effect-checkbox', function() {
+          if (lockPropagation)
+            return;
+          
           var $checkbox = $(this);
           var isChecked = $checkbox.prop('checked');
           var effect = GetEffectById($checkbox.data('id'));
           
           ToggleEnabledEffect(isChecked, effect.id, effect);
+          
+          if (effect.multieffect)
+          {
+            var siblingEffect = GetEffectWithTheSameTitle(effect);
+            
+            if (siblingEffect)
+            {
+              lockPropagation = true;
+              $effectsBlock.find('.effect-checkbox[data-id="' + siblingEffect.id + '"]')
+                           .bootstrapToggle(isChecked ? 'on' : 'off');
+              
+              ToggleEnabledEffect(isChecked, siblingEffect.id, siblingEffect);
+              lockPropagation = false;
+            }
+          }
           
           if (effect.suppressingCategory)
             UpdateSuppression();
@@ -609,16 +719,17 @@
         return null;
       }
       
-      function GenEffect(category, value, title, suppressingCategory, forcedId)
+      function GenEffect(category, value, title, suppressingCategory, forcedId, multieffect)
       {
-        VARS.EFFECT_ID = forcedId || VARS.EFFECT_ID || 1;
+        VARS.EFFECT_ID = forcedId || VARS.EFFECT_ID || 1;        
         return {
           id: VARS.EFFECT_ID++,
           title: title,
           value: value,
           category: category,          
           suppressingCategory: suppressingCategory || null,
-          suppressed: false
+          suppressed: false,
+          multieffect: multieffect ? true : false
         };
       }
       
@@ -626,6 +737,15 @@
       {
         for (var i in EFFECTS)
           if (EFFECTS[i].id == id)
+            return EFFECTS[i];
+        
+        return null;
+      }
+      
+      function GetEffectWithTheSameTitle(effect)
+      {
+        for (var i in EFFECTS)
+          if (EFFECTS[i].title == effect.title && EFFECTS[i].id != effect.id)
             return EFFECTS[i];
         
         return null;
@@ -761,6 +881,12 @@
         if (!data || !$block)
           return;
         
+        var blockId = $block.attr('id');
+        var oldData = RESULTS_PER_BLOCK[blockId] || null;
+        var totalFramesPrev = GetTotalFrames(oldData);
+        var totalFrames = GetTotalFrames(data);
+        RESULTS_PER_BLOCK[blockId] = data;
+        
         var delay = 5;
         var maxDuration = 1.7 * ATTACK_DURATION_LG * 16 / 6 + delay;
         
@@ -770,6 +896,10 @@
         
         if (mhReload > 0)
           maxDuration+= 250;
+        
+        console.log('proposed max', maxDuration);
+        console.log('real     max', MAX_ACTION_DURATION);
+        maxDuration = MAX_ACTION_DURATION;
         
         var ohAttack = data.oh && data.oh.attack ? data.oh.attack : 0;
         var ohRecovery = data.oh && data.oh.recovery ? data.oh.recovery : 0;
@@ -792,8 +922,12 @@
         $block.find('.oh-attack-result').toggleClass('hidden', !IS_OFFHAND_ATTACKING);
         $block.find('.oh-recovery-result').toggleClass('hidden', !IS_OFFHAND_ATTACKING);
         
-//        $block.find('.progress').animate({ opacity: 0.5 }, 250)
-//                                .animate({ opacity: 1.0 }, 250);
+        console.log('totalFrames', totalFrames);
+        console.log('totalFramesPrev', totalFramesPrev);
+        
+        if (totalFrames == totalFramesPrev && !PREVENT_RESULTS_BLINKING)
+          $block.find('.progress').animate({ opacity: 0.5 }, 250)
+                                  .animate({ opacity: 1.0 }, 250);
       }
       
       function UpdateSetupConfig() 
@@ -822,6 +956,23 @@
         var $block = $('#results-block');
         $block.find('.oh-attack').toggleClass('hidden', !IS_OFFHAND_ATTACKING);
         $block.find('.oh-recovery').toggleClass('hidden', !IS_OFFHAND_ATTACKING);
+      }
+      
+      function UpdateMaxActionDuration(baseValues, finalValues)
+      {
+        var totalFramesBase = GetTotalFrames(baseValues);
+        var totalFramesFinal = GetTotalFrames(finalValues);
+        
+        var delay = 5;
+        var maxDuration = 1.7 * ATTACK_DURATION_LG * 16 / 6 + delay;
+        if (baseValues && baseValues.mh && baseValues.mh.reload > 0)
+          maxDuration+= 250;
+       
+        console.log('UpdateMaxActionDuration', baseValues, finalValues);
+        console.log('>>', totalFramesBase, totalFramesFinal, maxDuration);
+        maxDuration = Math.max(maxDuration, totalFramesBase);
+        maxDuration = Math.max(maxDuration, totalFramesFinal);
+        MAX_ACTION_DURATION = maxDuration;
       }
       
       function UpdateSuppression()
@@ -901,9 +1052,13 @@
       {
         UpdateEffectCoefficients();
         UpdateArmorPenaltyValue();
+        
         var baseValues = ComputeBaseValues();
+        var finalValues = ComputeFinalValues(baseValues);
+        UpdateMaxActionDuration(baseValues, finalValues);
         PopulateBaseResults(baseValues);
-        PopulateFinalResults(ComputeFinalValues(baseValues));
+        PopulateFinalResults(finalValues);
+        PREVENT_RESULTS_BLINKING = false;
       }
       
       function UpdateArmorPenaltyValue()
@@ -956,19 +1111,20 @@
       
       function ComputeFinalValues(values)
       {
-        values = values || ComputeBaseValues();
+        values = jQuery.extend(true, {}, values || ComputeBaseValues());
         var cats = EFFECT_CATEGORIES;
         var coefs = IsWieldableRanged(MH_WIELDABLE) ? EFFECT_COEFFICIENTS.ranged
                                                     : EFFECT_COEFFICIENTS.melee;
-                                                    
+                   
+        var dexCoef = 1 + (CURRENT_DEX - 10) / 33.3;
         if (values.mh && values.mh.reload && coefs[cats.reloadSpeedCoef])
-          values.mh.reload/= coefs[cats.reloadSpeedCoef];
+          values.mh.reload/= coefs[cats.reloadSpeedCoef] * dexCoef;
         
         var speedCoefMH = ComputeMainhandSpeedCoef();
         var speedCoefOH = ComputeOffhandSpeedCoef();               
         
         var recoveryCoefMH = Math.max(0, 1 - 2 * speedCoefMH) / 1.2;
-        var recoveryCoefOH = Math.max(0, 1 - 2 * speedCoefOH) / 1.2;
+        var recoveryCoefOH = Math.max(0, 1 - 2 * speedCoefOH) / 1.2;        
         
         console.log('speedCoefMH', speedCoefMH);
         console.log('speedCoefOH', speedCoefOH);
@@ -976,10 +1132,16 @@
         console.log('recoveryCoefOH', recoveryCoefOH);
         
         if (values.mh && values.mh.attack)
+        {
+          values.mh.attack/= dexCoef;
           values.mh.recovery = values.mh.attack * recoveryCoefMH; 
+        }
         
         if (values.oh && values.oh.attack)
-          values.oh.recovery = values.oh.attack * recoveryCoefOH; 
+        {
+          values.oh.attack/= dexCoef;
+          values.oh.recovery = values.oh.attack * recoveryCoefOH;
+        }
         
         console.log('values', values);
         
@@ -1060,6 +1222,25 @@
       }
       
       /* ****************************** UTILS ******************************* */
+      
+      function GetTotalFrames(data)
+      {
+        var total = 0;
+        
+        if (!data)
+          return total;
+        
+        var delay = 5;
+        total+= delay;
+        total+= data.mh && data.mh.attack ? data.mh.attack : 0;
+        total+= data.mh && data.mh.recovery ? data.mh.recovery : 0;
+        total+= data.mh && data.mh.reload ? data.mh.reload : 0;
+        total+= data.oh && data.oh.attack ? delay : 0;
+        total+= data.oh && data.oh.attack ? data.oh.attack : 0;
+        total+= data.oh && data.oh.attack ? data.oh.recovery : 0;
+        
+        return GetRoundedValue(total);
+      }
       
       function IsWieldableRanged(wieldable)
       {
