@@ -50,6 +50,9 @@
         top: -40px;
         right: 5px;
       }
+      #dex-slider {
+        margin-top: 18px;
+      }
       
       .result-docked-top #results-pin {
         display: block;
@@ -79,6 +82,9 @@
       .result-docked-top #results-pin {
         top: auto;
         bottom: -5px;
+      }
+      .result-docked-top #dex-slider {
+        display: none;
       }
       
       .btn-info-alt {
@@ -386,7 +392,7 @@
                   <div class="progress-bar progress-bar-success oh-attack hidden" style="width: 0%" title="Attack duration"></div>
                   <div class="progress-bar progress-bar-warning oh-recovery hidden" style="width: 0%;" title="Recovery duration"></div>
                 </div>
-                <small>Base values (at <span id="base-dex-value">10</span> DEX): 
+                <small>Base (at <span id="base-dex-value">10</span> DEX): 
                   <cite title="Speed">
                     <span class="mh-attack-result">attack: <span class="value">30f</span></span><span 
                           class="mh-recovery-result">, recovery: <span class="value">50f</span></span><span 
@@ -406,7 +412,7 @@
                   <div class="progress-bar progress-bar-success oh-attack hidden" style="width: 0%" title="Attack duration"></div>
                   <div class="progress-bar progress-bar-warning oh-recovery hidden" style="width: 0%;" title="Recovery duration"></div>
                 </div>
-                <small>Final values (at <span id="final-dex-value">10</span> DEX): 
+                <small>Final (at <span id="final-dex-value">10</span> DEX): 
                   <cite title="Speed">
                     <span class="mh-attack-result">attack: <span class="value">30f</span></span><span 
                           class="mh-recovery-result">, recovery: <span class="value">50f</span></span><span 
@@ -415,10 +421,7 @@
                           class="oh-recovery-result hidden">, recovery: <span class="value">50f</span></span>
                   </cite>
                 </small>
-                <br/>
-                <div id="dex-slider-wrap">
-                  <div id="dex-slider"></div>
-                </div>
+                <div id="dex-slider"></div>
               </blockquote>
             </div>            
           </div>  
@@ -1262,7 +1265,7 @@
       
       function GetRoundedValue(floatVal)
       {
-        return Math.round(floatVal * 100) / 100;
+        return Math.round(floatVal * 10) / 10;
       }
             
       function MultArrayValues(arr)
