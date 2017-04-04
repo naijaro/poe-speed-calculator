@@ -152,8 +152,19 @@
       }
       .toggle.btn {
         min-height: 30px;
-      }
-      
+      }      
+      .toggle .toggle-group { 
+        -webkit-transition: left 0.25s cubic-bezier(.02, .01, .47, 1); 
+           -moz-transition: left 0.25s cubic-bezier(.02, .01, .47, 1); 
+             -o-transition: left 0.25s cubic-bezier(.02, .01, .47, 1); 
+                transition: left 0.25s cubic-bezier(.02, .01, .47, 1); 
+      }      
+      .progress-bar { /* ease */
+        -webkit-transition: width 0.3s cubic-bezier(.02, .01, .47, 1); 
+           -moz-transition: width 0.3s cubic-bezier(.02, .01, .47, 1);
+             -o-transition: width 0.3s cubic-bezier(.02, .01, .47, 1);
+                transition: width 0.3s cubic-bezier(.02, .01, .47, 1);
+      }      
       #gloves-col .placeholder {
         min-height: 29px;
       }
@@ -226,13 +237,13 @@
                 </div>
                 <div class="col-lg-6 col-sm-6 col-xs-12" id="gloves-col">
                   <div class="panel panel-default">
-                    <div class="panel-heading">Gloves (TODO)</div>
+                    <div class="panel-heading">Gloves</div>
                     <div class="panel-body">
                       <select class="form-control">
-                        <option>Other</option>
-                        <option>Gauntlets of Swift Action</option>
-                        <option>Mourning Gloves</option>
-                        <option>Pilferer's Grip</option>
+                        <option value="other">Other</option>
+                        <option value="swift_action">Gauntlets of Swift Action</option>
+                        <option value="mourning">Mourning Gloves</option>
+                        <option value="pilferer">Pilferer's Grip</option>
                       </select>
                       <div class="placeholder">&nbsp;</div>
                     </div>
@@ -469,6 +480,11 @@
         GenEffect(EFFECT_CATEGORIES.reloadSpeedCoef, 0.80, "Vicious Aim")
       ];
       
+      var GLOVES_EFFECTS = {
+        swift_action: GenEffect(EFFECT_CATEGORIES.attackSpeedMult, 1.15, "Gauntlets of Swift Action"),
+        mourning: GenEffect(EFFECT_CATEGORIES.attackSpeedMult, 1.10, "Mourning Gloves", SUPPRESING_CATEGORIES.attackSpeedMult1)
+      };
+      
       var ENABLED_EFFECTS = {};
       
       function Init()
@@ -508,25 +524,48 @@
           UpdateResults();
         });
         
+        $('#gloves-col select').on('change', function() {
+          var glovesName = this.value;
+          var glovesEffect = GLOVES_EFFECTS[glovesName];
+          
+          for (var glovesId in GLOVES_EFFECTS)
+            ToggleEnabledEffect(glovesName == glovesId, glovesId, GLOVES_EFFECTS[glovesId]);
+          
+          if (glovesEffect != null && glovesEffect.suppressingCategory)
+            UpdateSuppression();
+          
+          UpdateResults();
+        });
+        
         $('#equipment-block .property[type="checkbox"]').on('change', function() {
           UpdateResults();
         });
         
-        $('.panel-effects .effect-checkbox').change(function() {
+        $('#effects-block').on('change', '.effect-checkbox', function() {
           var $checkbox = $(this);
           var isChecked = $checkbox.prop('checked');
           var effect = GetEffectById($checkbox.data('id'));
           
-          if (isChecked)
-            ENABLED_EFFECTS[effect.id] = effect;
-          else
-            delete ENABLED_EFFECTS[effect.id];
+          ToggleEnabledEffect(isChecked, effect.id, effect);
           
           if (effect.suppressingCategory)
             UpdateSuppression();
           
           UpdateResults(); 
         });
+      }
+      
+      function ToggleEnabledEffect(status, effectId, effect)
+      {
+        effect = effect || GetEffectById(effectId);
+        
+        if (effect == null)
+          return;
+        
+        if (status)
+          ENABLED_EFFECTS[effectId] = effect;
+        else
+          delete ENABLED_EFFECTS[effectId];
       }
       
       /* ****************************** EVENTS ****************************** */
@@ -753,8 +792,8 @@
         $block.find('.oh-attack-result').toggleClass('hidden', !IS_OFFHAND_ATTACKING);
         $block.find('.oh-recovery-result').toggleClass('hidden', !IS_OFFHAND_ATTACKING);
         
-        $block.find('.progress').animate({ opacity: 0.5 }, 300)
-                                .animate({ opacity: 1.0 }, 300);
+//        $block.find('.progress').animate({ opacity: 0.5 }, 250)
+//                                .animate({ opacity: 1.0 }, 250);
       }
       
       function UpdateSetupConfig() 
@@ -862,8 +901,9 @@
       {
         UpdateEffectCoefficients();
         UpdateArmorPenaltyValue();
-        PopulateBaseResults(ComputeBaseValues());
-        PopulateFinalResults(ComputeFinalValues());
+        var baseValues = ComputeBaseValues();
+        PopulateBaseResults(baseValues);
+        PopulateFinalResults(ComputeFinalValues(baseValues));
       }
       
       function UpdateArmorPenaltyValue()
@@ -871,9 +911,11 @@
         var $container = $('#armor-col');        
         var isDurganized = $container.find('.property[data-prop="durganized"]').is(':checked');
         var withArmoredGrace = $container.find('.property[data-prop="armored_grace"]').is(':checked');
+        var withPilfererGloves = $('#gloves-col select').val() == 'pilferer';
         
         var penalty = $container.find("select").val();
         var foo = isDurganized ? 0.15 : 0;
+            foo = foo == 0 && withPilfererGloves ? 0.10 : foo; // pilferer can be surppressed
         var bar = withArmoredGrace ? 0.20 : 0;
         
         ARMOR_PENALTY = Math.max(0, penalty - foo - bar);
@@ -912,9 +954,9 @@
         return values;
       }
       
-      function ComputeFinalValues()
+      function ComputeFinalValues(values)
       {
-        var values = ComputeBaseValues();
+        values = values || ComputeBaseValues();
         var cats = EFFECT_CATEGORIES;
         var coefs = IsWieldableRanged(MH_WIELDABLE) ? EFFECT_COEFFICIENTS.ranged
                                                     : EFFECT_COEFFICIENTS.melee;
@@ -1052,17 +1094,7 @@
       {
         return Math.round(floatVal * 100) / 100;
       }
-      
-      function AddArrayValues(arr)
-      {
-        var foo = 0;
-        
-        for (var i in arr)
-          foo+= arr[i];
-        
-        return foo;
-      }
-      
+            
       function MultArrayValues(arr)
       {
         var foo = 1;
