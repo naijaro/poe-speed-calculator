@@ -376,10 +376,11 @@
               <i class="glyphicon glyphicon-pushpin" id="results-pin"></i>
               <blockquote style="padding-right: 0;" id="base-results-block">
                 <div class="progress">
-                  <div class="progress-bar                      mh-delay"  style="width: 4%" title="Delay (4-5 frames)"></div>
-                  <div class="progress-bar progress-bar-success mh-attack" style="width: 25%" title="Attack duration"></div>
-                  <div class="progress-bar progress-bar-warning mh-recovery" style="width: 41.6667%;" title="Recovery duration"></div>
+                  <div class="progress-bar                      mh-delay"  style="width: 2.39234%;" title="Delay (4-5 frames)"></div>
+                  <div class="progress-bar progress-bar-success mh-attack" style="width: 14.3541%;" title="Attack duration"></div>
+                  <div class="progress-bar progress-bar-warning mh-recovery" style="width: 23.9234%;" title="Recovery duration"></div>
                   <div class="progress-bar progress-bar-danger  mh-reload" style="width: 0%" title="Reload duration"></div>
+                  <div class="progress-bar                      oh-delay hidden"  style="width: 2.39234%;" title="Delay (4-5 frames)"></div>
                   <div class="progress-bar progress-bar-success oh-attack hidden" style="width: 0%" title="Attack duration"></div>
                   <div class="progress-bar progress-bar-warning oh-recovery hidden" style="width: 0%;" title="Recovery duration"></div>
                 </div>
@@ -395,10 +396,11 @@
               </blockquote>
               <blockquote style="padding-right: 0;" id="final-results-block">
                 <div class="progress">
-                  <div class="progress-bar                      mh-delay"  style="width: 4%" title="Delay (4-5 frames)"></div>
-                  <div class="progress-bar progress-bar-success mh-attack" style="width: 25%" title="Attack duration"></div>
-                  <div class="progress-bar progress-bar-warning mh-recovery" style="width: 41.6667%;" title="Recovery duration"></div>
+                  <div class="progress-bar                      mh-delay"  style="width: 2.39234%;" title="Delay (4-5 frames)"></div>
+                  <div class="progress-bar progress-bar-success mh-attack" style="width: 14.3541%;" title="Attack duration"></div>
+                  <div class="progress-bar progress-bar-warning mh-recovery" style="width: 23.9234%;" title="Recovery duration"></div>
                   <div class="progress-bar progress-bar-danger  mh-reload" style="width: 0%" title="Reload duration"></div>
+                  <div class="progress-bar                      oh-delay hidden"  style="width: 2.39234%;" title="Delay (4-5 frames)"></div>
                   <div class="progress-bar progress-bar-success oh-attack hidden" style="width: 0%" title="Attack duration"></div>
                   <div class="progress-bar progress-bar-warning oh-recovery hidden" style="width: 0%;" title="Recovery duration"></div>
                 </div>
@@ -887,23 +889,15 @@
         var totalFrames = GetTotalFrames(data);
         RESULTS_PER_BLOCK[blockId] = data;
         
-        var delay = 5;
-        var maxDuration = 1.7 * ATTACK_DURATION_LG * 16 / 6 + delay;
-        
+        var delay = 5;        
         var mhAttack= data.mh && data.mh.attack ? data.mh.attack : 0;
         var mhRecovery = data.mh && data.mh.recovery ? data.mh.recovery : 0;
         var mhReload = data.mh && data.mh.reload ? data.mh.reload : 0;
         
-        if (mhReload > 0)
-          maxDuration+= 250;
-        
-        console.log('proposed max', maxDuration);
-        console.log('real     max', MAX_ACTION_DURATION);
-        maxDuration = MAX_ACTION_DURATION;
-        
         var ohAttack = data.oh && data.oh.attack ? data.oh.attack : 0;
         var ohRecovery = data.oh && data.oh.recovery ? data.oh.recovery : 0;
         
+        var maxDuration = MAX_ACTION_DURATION;
         $block.find('.mh-delay').width(GetPercStr(delay / maxDuration));
         $block.find('.mh-attack').width(GetPercStr(mhAttack / maxDuration));
         $block.find('.mh-recovery').width(GetPercStr(mhRecovery / maxDuration));
@@ -912,19 +906,17 @@
         $block.find('.oh-attack').width(GetPercStr(ohAttack / maxDuration));
         $block.find('.oh-recovery').width(GetPercStr(ohRecovery / maxDuration));
         
-        $block.find('.mh-attack-result .value').html(GetRoundedValue(mhAttack));
-        $block.find('.mh-recovery-result .value').html(GetRoundedValue(mhRecovery));
-        $block.find('.mh-reload-result .value').html(GetRoundedValue(mhReload));
-        $block.find('.oh-attack-result .value').html(GetRoundedValue(ohAttack));
-        $block.find('.oh-recovery-result .value').html(GetRoundedValue(ohRecovery));
+        $block.find('.mh-attack-result .value').html(GetRoundedValue(mhAttack) + 'f');
+        $block.find('.mh-recovery-result .value').html(GetRoundedValue(mhRecovery) + 'f');
+        $block.find('.mh-reload-result .value').html(GetRoundedValue(mhReload) + 'f');
+        $block.find('.oh-attack-result .value').html(GetRoundedValue(ohAttack) + 'f');
+        $block.find('.oh-recovery-result .value').html(GetRoundedValue(ohRecovery) + 'f');
         
         $block.find('.mh-reload-result').toggleClass('hidden', mhReload <= 0);
+        $block.find('.oh-delay').toggleClass('hidden', !IS_OFFHAND_ATTACKING);
         $block.find('.oh-attack-result').toggleClass('hidden', !IS_OFFHAND_ATTACKING);
         $block.find('.oh-recovery-result').toggleClass('hidden', !IS_OFFHAND_ATTACKING);
-        
-        console.log('totalFrames', totalFrames);
-        console.log('totalFramesPrev', totalFramesPrev);
-        
+                
         if (totalFrames == totalFramesPrev && !PREVENT_RESULTS_BLINKING)
           $block.find('.progress').animate({ opacity: 0.5 }, 250)
                                   .animate({ opacity: 1.0 }, 250);
@@ -965,11 +957,13 @@
         
         var delay = 5;
         var maxDuration = 1.7 * ATTACK_DURATION_LG * 16 / 6 + delay;
+        
+        if (IS_OFFHAND_ATTACKING)
+          maxDuration+= delay;
+        
         if (baseValues && baseValues.mh && baseValues.mh.reload > 0)
           maxDuration+= 250;
        
-        console.log('UpdateMaxActionDuration', baseValues, finalValues);
-        console.log('>>', totalFramesBase, totalFramesFinal, maxDuration);
         maxDuration = Math.max(maxDuration, totalFramesBase);
         maxDuration = Math.max(maxDuration, totalFramesFinal);
         MAX_ACTION_DURATION = maxDuration;
@@ -1125,12 +1119,7 @@
         
         var recoveryCoefMH = Math.max(0, 1 - 2 * speedCoefMH) / 1.2;
         var recoveryCoefOH = Math.max(0, 1 - 2 * speedCoefOH) / 1.2;        
-        
-        console.log('speedCoefMH', speedCoefMH);
-        console.log('speedCoefOH', speedCoefOH);
-        console.log('recoveryCoefMH', recoveryCoefMH);
-        console.log('recoveryCoefOH', recoveryCoefOH);
-        
+                
         if (values.mh && values.mh.attack)
         {
           values.mh.attack/= dexCoef;
@@ -1142,8 +1131,6 @@
           values.oh.attack/= dexCoef;
           values.oh.recovery = values.oh.attack * recoveryCoefOH;
         }
-        
-        console.log('values', values);
         
         return values;
       }
