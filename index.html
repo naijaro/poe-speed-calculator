@@ -16,42 +16,62 @@
     <meta property='og:site_name' content='POE Speed Calculator'>
     <meta property='og:image' content='http://d1079ywfijtdjs.cloudfront.net/eternity/media/wallpapers/logo/pe-wallpaper-logo-936x526.jpg'>
     
-    <!--
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-    -->
     <link rel="stylesheet" href="https://bootswatch.com/slate/bootstrap.min.css">
-    <link rel="stylesheet" href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/9.2.0/nouislider.min.css">
-           
+    <!--
+    <link rel="stylesheet" href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css">
+      inlining bootstrap-toggle css
+      -->
     <style media="screen" type="text/css">
-      body {
-        overflow-y: scroll;
-      }
-      .hidden {
-        display: none;
-      }
-      .navbar {
-        margin-bottom: 10px;
-      }
-      #main-form {
-        margin-top: 5px;
-      }
-      #result-values {
-        position: relative;
-      }
-      #results-pin {
-        display: none;
-        position: absolute;
-        top: -40px;
-        right: 5px;
-      }
-      #dex-slider {
-        margin-top: 18px;
-      }
+     /*! =======================================================================
+      * Bootstrap Toggle: bootstrap-toggle.css v2.2.0
+      * http://www.bootstraptoggle.com
+      * ========================================================================
+      * Copyright 2014 Min Hur, The New York Times Company
+      * Licensed under MIT
+      * ======================================================================== */
+     .checkbox label .toggle,.checkbox-inline .toggle{margin-left:-20px;margin-right:5px}
+     .toggle{position:relative;overflow:hidden}
+     .toggle input[type=checkbox]{display:none}
+     .toggle-group{position:absolute;width:200%;top:0;bottom:0;left:0;transition:left .35s;-webkit-transition:left .35s;-moz-user-select:none;-webkit-user-select:none}
+     .toggle.off .toggle-group{left:-100%}
+     .toggle-on{position:absolute;top:0;bottom:0;left:0;right:50%;margin:0;border:0;border-radius:0}
+     .toggle-off{position:absolute;top:0;bottom:0;left:50%;right:0;margin:0;border:0;border-radius:0}
+     .toggle-handle{position:relative;margin:0 auto;padding-top:0;padding-bottom:0;height:100%;width:0;border-width:0 1px}
+     .toggle.btn{min-width:59px;min-height:34px}
+     .toggle-on.btn{padding-right:24px}
+     .toggle-off.btn{padding-left:24px}
+     .toggle.btn-lg{min-width:79px;min-height:45px}
+     .toggle-on.btn-lg{padding-right:31px}
+     .toggle-off.btn-lg{padding-left:31px}
+     .toggle-handle.btn-lg{width:40px}
+     .toggle.btn-sm{min-width:50px;min-height:30px}
+     .toggle-on.btn-sm{padding-right:20px}
+     .toggle-off.btn-sm{padding-left:20px}
+     .toggle.btn-xs{min-width:35px;min-height:22px}
+     .toggle-on.btn-xs{padding-right:12px}
+     .toggle-off.btn-xs{padding-left:12px}
+    </style>  
+    
+    <style media="screen" type="text/css">
+     /*! =======================================================================
+      * Poe Speed Calculator Toggle: v1.0
+      * https://naijaro.github.io/poe-speed-calculator/
+      * ========================================================================
+      * Copyright 2017 Naijaro (aka MaxQuest)
+      * Licensed under MIT
+      * ======================================================================== */
+      body {overflow-y: scroll;}
       
-      .result-docked-top #results-pin {
-        display: block;
-      }
+      .hidden {display: none;}
+      .navbar {margin-bottom: 10px;}
+      
+      #main-form {margin-top: 5px;}
+      #dex-slider {margin-top: 18px;}      
+      #results-pin {display: none;position: absolute;top: -40px;right: 5px;}
+      #result-values {position: relative;}
+      
+      .result-docked-top #results-pin {display: block;}
       .result-docked-top #results-block {
         position: fixed;
         top: 0;
@@ -63,24 +83,15 @@
         background-image: linear-gradient(#484e55, #3a3f44 60%, #313539);
         border: 1px solid rgba(0,0,0,0.6);
       }
-      .result-docked-top #results-block h3 {
-        display: none;
-      }
+      .result-docked-top #results-block h3 {display: none;}
       .result-docked-top #result-values {
         max-width: 1070px;
         width: 100%;
         margin: 0 auto;
       }
-      .result-docked-top #main-form {
-        margin-top: 25px;
-      }
-      .result-docked-top #results-pin {
-        top: auto;
-        bottom: -5px;
-      }
-      .result-docked-top #dex-slider {
-        display: none;
-      }
+      .result-docked-top #main-form {margin-top: 25px;}
+      .result-docked-top #results-pin {top: auto;bottom: -5px;}
+      .result-docked-top #dex-slider {display: none;}
       
       .btn-info-alt {
         color: #ffffff;
@@ -103,23 +114,11 @@
         -webkit-filter: none;
         filter: none;
       }
-      .well {
-        padding-bottom: 0;
-      }
-      .form-control {
-        height: 28px;
-        padding: 4px 12px;
-      }
-      .panel .toggle.btn {
-        width: 100%;
-        margin-bottom: 5px;
-      }
-      .panel .toggle.btn label {
-        text-align: left;
-      }
-      .panel .effect-checkbox {
-        width: 100%;
-      }
+      .well {padding-bottom: 0;}
+      .form-control {height: 28px;padding: 4px 12px;}
+      .panel .toggle.btn {width: 100%;margin-bottom: 5px;}
+      .panel .toggle.btn label {text-align: left;}
+      .panel .effect-checkbox {width: 100%;}
       .panel .panel-heading {
         position: relative;
         overflow: hidden;
@@ -132,39 +131,27 @@
         right: 7px;
         top: 11px;
       }
-      .panel > .panel-heading .badge-info {
-        background-color: #5bc0de;
-      }
-      .panel > .panel-heading .badge-info-alt {
-        background-color: #915bde ;
-      }
+      .panel > .panel-heading .badge-info {background-color: #5bc0de;}
+      .panel > .panel-heading .badge-info-alt {background-color: #915bde ;}
       
+      #gloves-col .placeholder {
+        min-height: 29px;
+      }
       #weapons-row .weapon-col {
         float: none;
         display: inline-block;
-
         -webkit-transition: width 500ms;
                 transition: width 500ms;
       }
-      #weapons-row.inline {
-        white-space: nowrap;
-      }      
-      #weapons-row.two-handed .weapon-col {
-        width: 100%;
-      }
+      #weapons-row.inline {white-space: nowrap;}      
+      #weapons-row.two-handed .weapon-col {width: 100%;}
       .weapon-col.abs-right {
         position: absolute;
         right: 0;
-      }      
-      .toggle.suppressed .toggle-on {
-        background-image: linear-gradient(#a6a6a7, #79797d 60%, #707171);
       }
-      .toggle.suppressed .toggle-on:hover {        
-        background-image: linear-gradient(#8d8d8e, #5d5d5f 60%, #565656);
-      }      
-      .progress-bar.oh-attack {
-        opacity: 0.8;
-      }
+      .toggle.suppressed .toggle-on {background-image: linear-gradient(#a6a6a7, #79797d 60%, #707171);}
+      .toggle.suppressed .toggle-on:hover { background-image: linear-gradient(#8d8d8e, #5d5d5f 60%, #565656);}      
+
       .toggle.btn {
         min-height: 30px;
       }      
@@ -179,11 +166,10 @@
            -moz-transition: width 0.3s cubic-bezier(.02, .01, .47, 1);
              -o-transition: width 0.3s cubic-bezier(.02, .01, .47, 1);
                 transition: width 0.3s cubic-bezier(.02, .01, .47, 1);
-      }      
-      #gloves-col .placeholder {
-        min-height: 29px;
       }
-      
+      .progress-bar.oh-attack {
+        opacity: 0.8;
+      }
       .noUi-target {
         border: 0 none;
         outline: 0 none;
@@ -246,10 +232,7 @@
         }
       }   
     </style>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-    <!--
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js" defer></script>
     <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js" defer></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/9.2.0/nouislider.min.js" defer></script>
   </head>
@@ -430,7 +413,7 @@
       </form>
     </div>
     <script>
-    (function($, undefined) {
+    (function(undefined) {
 
       var VARS = {};
       var MAX_ACTION_DURATION = 209;
@@ -558,8 +541,12 @@
       
       function Init()
       {
-        document.readyState === "complete" ? InitOnReady()
-                                           : $(document).ready(function(){InitOnReady();});
+        document.addEventListener('DOMContentLoaded', function() {
+          InitOnReady();
+        });
+        
+        // document.readyState === "complete" ? InitOnReady()
+        //                                    : $(document).ready(function(){InitOnReady();});
       }
 
       function InitOnReady()
@@ -1285,7 +1272,7 @@
 
       /* ******************************************************************** */
 
-    })(jQuery);
+    })();
     </script>
     <script>
       (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
