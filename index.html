@@ -63,8 +63,9 @@
       * ======================================================================== */
       body {overflow-y: scroll;}
       
-      .hidden {display: none;}
       .navbar {margin-bottom: 10px;}
+      .hidden {display: none;}
+      .invisible {visibility:  hidden;}      
       
       #main-form {margin-top: 5px;}
       #dex-slider {margin-top: 18px;}      
@@ -140,6 +141,7 @@
       #weapons-row .weapon-col {
         float: none;
         display: inline-block;
+        vertical-align: top;
         -webkit-transition: width 500ms;
                 transition: width 500ms;
       }
@@ -314,10 +316,10 @@
                     <div class="panel-heading">Offhand</div>
                     <div class="panel-body">
                       <select class="form-control" id="offhand-select"></select>
-                      <div class="checkbox">
+                      <div class="checkbox invisible" data-prop="durganized">
                         <label><input type="checkbox" class="property" data-prop="durganized"> Is Durganized</label>
                       </div>
-                      <div class="checkbox">
+                      <div class="checkbox invisible" data-prop="speed">
                         <label><input type="checkbox" class="property" data-prop="speed"> Has Speed <span class="text-muted">(enchant)</span></label>
                       </div>
                     </div>
@@ -423,6 +425,7 @@
       var ATTACK_DURATION_MD = 30;
       var ATTACK_DURATION_LG = 45;
 
+      var NOTHING_ID = 0;
       var SHIELD_ID = 200;
       var BASHING_SHIELD_ID = 201;
 
@@ -430,7 +433,8 @@
         oneHanded: 'One-Handed',
         twoHandedMelee: 'Two-Handed Melee',
         twoHandedRanged: 'Two-Handed Ranged',
-        shields: 'Shields'
+        shields: 'Shields',
+        emptyHand: 'Empty Hand'
       };
             
       var WIELDABLES = [
@@ -466,7 +470,9 @@
         GenWieldable(WIELDABLE_CATEGORIES.twoHandedRanged, ATTACK_DURATION_LG, "War Bow"),
         
         GenWieldable(WIELDABLE_CATEGORIES.shields, null, "Shield", null, SHIELD_ID),
-        GenWieldable(WIELDABLE_CATEGORIES.shields, ATTACK_DURATION_SM, "Shield with Bash", null, BASHING_SHIELD_ID)
+        GenWieldable(WIELDABLE_CATEGORIES.shields, ATTACK_DURATION_SM, "Shield with Bash", null, BASHING_SHIELD_ID),
+        
+        GenWieldable(WIELDABLE_CATEGORIES.emptyHand, null, "Nothing", null, NOTHING_ID)
       ];
       
       var $MAINHAND_SELECT;
@@ -687,6 +693,19 @@
       {
         OH_WIELDABLE = GetWieldableById(wieldableId);
         
+        var $container = $('#offhand-col');
+        var $checkboxDurganized = $container.find('.checkbox[data-prop="durganized"]');
+        var $checkboxSpeed = $container.find('.checkbox[data-prop="speed"]');
+        
+        $checkboxDurganized.toggleClass('invisible', $.inArray(OH_WIELDABLE.category, [
+          WIELDABLE_CATEGORIES.emptyHand
+        ]) >= 0);
+        
+        $checkboxSpeed.toggleClass('invisible', $.inArray(OH_WIELDABLE.category, [
+          WIELDABLE_CATEGORIES.emptyHand,
+          WIELDABLE_CATEGORIES.shields
+        ]) >= 0);
+        
         UpdateSetupConfig();
         UpdateResults();        
       }
@@ -800,10 +819,31 @@
       function PopulateOffhandSelect()
       {
         var categories = [
+          WIELDABLE_CATEGORIES.emptyHand,
           WIELDABLE_CATEGORIES.shields,
           WIELDABLE_CATEGORIES.oneHanded
         ]; 
         PopulateWieldableSelect($OFFHAND_SELECT, categories, WIELDABLES); 
+      }
+      
+       function PopulateWieldableSelect($select, categories, vars)
+      {
+        for (var i in categories)
+        {
+          var category = categories[i];
+          var $optgroup = $('<optgroup/>').attr('label', category);
+          
+          for (var k in vars)
+          {
+            var item = vars[k];
+            
+            if (item.category !== category)
+              continue;
+            
+            $('<option />').html(item.title).attr('value', item.id).appendTo($optgroup);
+          }
+          $optgroup.appendTo($select);
+        }
       }
       
       function PopulateEffects()
@@ -840,27 +880,7 @@
         $panel.find('.panel-body').html(effectsHtml);
         $panel.find('.panel-body input').bootstrapToggle();
       }
-      
-      function PopulateWieldableSelect($select, categories, vars)
-      {
-        for (var i in categories)
-        {
-          var category = categories[i];
-          var $optgroup = $('<optgroup/>').attr('label', category);
-          
-          for (var k in vars)
-          {
-            var item = vars[k];
             
-            if (item.category !== category)
-              continue;
-            
-            $('<option />').html(item.title).attr('value', item.id).appendTo($optgroup);
-          }
-          $optgroup.appendTo($select);
-        } 
-      }
-      
       function PopulateBaseResults(data) 
       {
         PopulateResults(data, GetBaseResultsBlock());
@@ -1192,7 +1212,7 @@
           if (category == cats.attackSpeedMult && isDurganized && OH_WIELDABLE.category != WIELDABLE_CATEGORIES.shields)
             coef*= 1.15;
 
-          if (category == cats.attackSpeedMult && hasSpeed && OH_WIELDABLE != WIELDABLE_CATEGORIES.shields)
+          if (category == cats.attackSpeedMult && hasSpeed && OH_WIELDABLE.category != WIELDABLE_CATEGORIES.shields)
             coef*= 1.20;
 
           speedCoef+= coef - 1;
