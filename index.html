@@ -248,7 +248,7 @@
     </div>
     <div class="container">
       <h1 id="page-title">Speed Calculator</h1>
-      <p id="page-info">version 1.0 (Beta, Early Access) <a class="text-muted" href="https://forums.obsidian.net/user/160416-maxquest/">by MaxQuest</a></p>     
+      <p id="page-info">version 1.0.2 (Beta) <a class="text-muted" href="https://forums.obsidian.net/user/160416-maxquest/">by MaxQuest</a></p>     
       <form class="form-horizontal" id="main-form">
         <div class="row">
           <div class="col-lg-6 col-md-6 col-xs-12" id="equipment-block">
@@ -902,7 +902,7 @@
         var totalFrames = GetTotalFrames(data);
         RESULTS_PER_BLOCK[blockId] = data;
         
-        var delay = 5;        
+        var delay = IS_2H_SETUP ? 5 : 4;       
         var mhAttack= data.mh && data.mh.attack ? data.mh.attack : 0;
         var mhRecovery = data.mh && data.mh.recovery ? data.mh.recovery : 0;
         var mhReload = data.mh && data.mh.reload ? data.mh.reload : 0;
@@ -916,6 +916,7 @@
         $block.find('.mh-recovery').width(GetPercStr(mhRecovery / maxDuration));
         $block.find('.mh-reload').width(GetPercStr(mhReload / maxDuration));
         
+        $block.find('.oh-delay').width(GetPercStr(delay / maxDuration));
         $block.find('.oh-attack').width(GetPercStr(ohAttack / maxDuration));
         $block.find('.oh-recovery').width(GetPercStr(ohRecovery / maxDuration));
         
@@ -968,18 +969,18 @@
         var totalFramesBase = GetTotalFrames(baseValues);
         var totalFramesFinal = GetTotalFrames(finalValues);
         
-        var delay = 5;
-        var maxDuration = 1.7 * ATTACK_DURATION_LG * 16 / 6 + delay;
+        var delay = IS_2H_SETUP ? 5 : 4;
+        var maxDuration = 1.7 * ATTACK_DURATION_LG * 16 / 6 + delay + 50;
         
         if (IS_OFFHAND_ATTACKING)
           maxDuration+= delay;
         
         if (baseValues && baseValues.mh && baseValues.mh.reload > 0)
           maxDuration+= 250;
-       
+                
         maxDuration = Math.max(maxDuration, totalFramesBase);
         maxDuration = Math.max(maxDuration, totalFramesFinal);
-        MAX_ACTION_DURATION = maxDuration;
+        MAX_ACTION_DURATION = maxDuration + 1;
       }
       
       function UpdateSuppression()
@@ -1123,7 +1124,7 @@
         var coefs = IsWieldableRanged(MH_WIELDABLE) ? EFFECT_COEFFICIENTS.ranged
                                                     : EFFECT_COEFFICIENTS.melee;
                    
-        var dexCoef = 1 + (CURRENT_DEX - 10) / 33.3;
+        var dexCoef = GetDexCoef(CURRENT_DEX);
         if (values.mh && values.mh.reload && coefs[cats.reloadSpeedCoef])
           values.mh.reload/= coefs[cats.reloadSpeedCoef] * dexCoef;
         
@@ -1223,23 +1224,33 @@
       
       /* ****************************** UTILS ******************************* */
       
-      function GetTotalFrames(data)
+      function GetTotalFrames(data, dex)
       {
         var total = 0;
         
         if (!data)
           return total;
         
-        var delay = 5;
-        total+= delay;
+        var delay = IS_2H_SETUP ? 5 : 4;
+        var dexCoef = GetDexCoef(dex || 10);
+        dexCoef = 1;
         total+= data.mh && data.mh.attack ? data.mh.attack : 0;
         total+= data.mh && data.mh.recovery ? data.mh.recovery : 0;
-        total+= data.mh && data.mh.reload ? data.mh.reload : 0;
-        total+= data.oh && data.oh.attack ? delay : 0;
+        total+= data.mh && data.mh.reload ? data.mh.reload : 0;        
         total+= data.oh && data.oh.attack ? data.oh.attack : 0;
         total+= data.oh && data.oh.attack ? data.oh.recovery : 0;
         
+        total/= dexCoef;
+        total+= delay;
+        total+= data.oh && data.oh.attack ? delay : 0;
+        
         return GetRoundedValue(total);
+      }
+      
+      function GetDexCoef(dex)
+      {
+        dex = dex || CURRENT_DEX;
+        return 1 + (dex - 10) / 33.3;
       }
       
       function IsWieldableRanged(wieldable)
