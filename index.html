@@ -818,9 +818,9 @@
       
       function PopulateEffectsPanel(category, style)
       {
-        var $panel = $('.panel-effects[data-id="' + category + '"]');
-        var style = style || 'info';
+        var $panel = $('.panel-effects[data-id="' + category + '"]');        
         var effectsHtml = '';
+        style = style || 'info';
         
         for (var i in EFFECTS)
         {
@@ -986,9 +986,9 @@
           
           for (var j in ENABLED_EFFECTS)
           {
-            var effect = ENABLED_EFFECTS[j];            
+            var effect = ENABLED_EFFECTS[j];
             if (effect.suppressingCategory != suppressingCategory)
-              continue;               
+              continue;
             
             var $checkbox = $effectsBlock.find('.effect-checkbox[data-id="' + effect.id + '"]');
             var $toggle = $checkbox.parent();
@@ -1108,15 +1108,15 @@
           values.mh.reload/= coefs[cats.reloadSpeedCoef] * dexCoef;
         
         var speedCoefMH = ComputeMainhandSpeedCoef();
-        var speedCoefOH = ComputeOffhandSpeedCoef();               
+        var speedCoefOH = ComputeOffhandSpeedCoef();
         
         var recoveryCoefMH = Math.max(0, 1 - 2 * speedCoefMH) / 1.2;
-        var recoveryCoefOH = Math.max(0, 1 - 2 * speedCoefOH) / 1.2;        
+        var recoveryCoefOH = Math.max(0, 1 - 2 * speedCoefOH) / 1.2;
                 
         if (values.mh && values.mh.attack)
         {
           values.mh.attack/= dexCoef;
-          values.mh.recovery = values.mh.attack * recoveryCoefMH; 
+          values.mh.recovery = values.mh.attack * recoveryCoefMH;
         }
         
         if (values.oh && values.oh.attack)
@@ -1195,7 +1195,7 @@
           if (category == cats.attackSpeedMult && hasSpeed && OH_WIELDABLE != WIELDABLE_CATEGORIES.shields)
             coef*= 1.20;
 
-          speedCoef+= coef - 1;          
+          speedCoef+= coef - 1;
         }
                 
         return speedCoef - ARMOR_PENALTY;
