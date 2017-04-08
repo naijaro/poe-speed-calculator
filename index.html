@@ -211,6 +211,7 @@
         min-width: 16px;
         text-align: right;
       }
+      #buffs-well {min-height: 801px;}
       
       @media all and (max-width: 767px) {
         #page-title {
@@ -232,7 +233,16 @@
         #results-pin {
           display: block;
         }
-      }   
+      }
+      @media all and (max-width: 414px) {
+        blockquote footer:before, blockquote small:before, 
+        blockquote .small:before {
+          content: '';
+        }
+        #buffs-well {
+          min-height: 1419px;
+        }
+      }
     </style>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js" defer></script>
     <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js" defer></script>
@@ -331,7 +341,7 @@
           </div>
           <div class="col-lg-6 col-md-6 col-xs-12" id="effects-block" style="float: right;">
             <h3 class="block-title">Buffs & Effects</h3>
-            <div class="well" style="min-height: 801px;">        
+            <div class="well" id="buffs-well">        
               <div class="row">
                 <div class="col-lg-6 col-sm-6 col-xs-12">
                   <div class="panel panel-default panel-effects" data-id="AttackSpeedMult">
@@ -366,7 +376,7 @@
           </div>          
           <div class="col-lg-6 col-md-6 col-xs-12" id="results-block">            
             <h3 class="block-title">Result</h3>
-            <div id="result-values">
+            <div id="result-values" style="min-height: 266px;">
               <i class="glyphicon glyphicon-pushpin" id="results-pin"></i>
               <blockquote style="padding-right: 0;" id="base-results-block">
                 <div class="progress">
@@ -409,6 +419,7 @@
                 </small>
                 <div id="dex-slider" style="min-height: 18px;"></div>
               </blockquote>
+              <div style="clear: both;"></div>
             </div>            
           </div>  
         </div>
