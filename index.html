@@ -70,7 +70,7 @@
       #main-form {margin-top: 5px;}
       #dex-slider {margin-top: 18px;}      
       #results-pin {display: none;position: absolute;top: -40px;right: 5px;}
-      #result-values {position: relative;}
+      #result-values {position: relative;min-height: 266px;}
       
       .result-docked-top #results-pin {display: block;}
       .result-docked-top #results-block {
@@ -93,6 +93,10 @@
       .result-docked-top #main-form {margin-top: 25px;}
       .result-docked-top #results-pin {top: auto;bottom: -5px;}
       .result-docked-top #dex-slider {display: none;}
+      .result-docked-top #cmp-results-block {display: none;}
+      .result-docked-top #result-values {min-height:  auto;}
+      .total-result-label {min-width: 32px; display: inline-block;}
+      .total-result-value {min-width: 40px; display: inline-block;text-align: right;}
       
       .btn-info-alt {
         color: #ffffff;
@@ -205,13 +209,29 @@
         border-color: #171616;
         box-shadow: none;
       }
+      .noUi-pips-horizontal {
+        height:45px;
+      }
       #base-dex-value,
       #final-dex-value {
         display: inline-block;        
         min-width: 16px;
         text-align: right;
       }
-      #buffs-well {min-height: 801px;}
+      #buffs-well {
+        min-height: 801px;
+      }
+      #how-it-is-computed {
+        float: right;
+        display: block;
+        font-size: 64%;
+        line-height: 26px;
+        color: #7a8288;
+        text-decoration: none;
+      }
+      #how-it-is-computed:hover {
+        color: #abb1b5;
+      }
       
       @media all and (max-width: 767px) {
         #page-title {
@@ -226,12 +246,18 @@
           text-align: center;
           margin: 0 0 20px;
         }
+        .block-title .title-text {
+          display: block;
+        }
         #gloves-col .placeholder {
           height: 0;
           min-height: 0;
         }
         #results-pin {
           display: block;
+        }
+        #how-it-is-computed {
+          float: none;
         }
       }
       @media all and (max-width: 414px) {
@@ -375,16 +401,19 @@
             </div>  
           </div>          
           <div class="col-lg-6 col-md-6 col-xs-12" id="results-block">            
-            <h3 class="block-title">Result</h3>
-            <div id="result-values" style="min-height: 266px;">
+            <h3 class="block-title">
+              <span class="title-text">Result</span>
+              <a id="how-it-is-computed" href="https://forums.obsidian.net/topic/86684-mechanics-the-big-attack-speed-conundrum/" target="_blank"><i class="glyphicon glyphicon-link"></i> how it is computed</a>
+            </h3>
+            <div id="result-values">
               <i class="glyphicon glyphicon-pushpin" id="results-pin"></i>
               <blockquote style="padding-right: 0;" id="base-results-block">
                 <div class="progress">
-                  <div class="progress-bar                      mh-delay"  style="width: 2.39234%;" title="Delay (4-5 frames)"></div>
-                  <div class="progress-bar progress-bar-success mh-attack" style="width: 14.3541%;" title="Attack duration"></div>
-                  <div class="progress-bar progress-bar-warning mh-recovery" style="width: 23.9234%;" title="Recovery duration"></div>
+                  <div class="progress-bar                      mh-delay"  style="width: 1.5444%;" title="Delay (4-5 frames)"></div>
+                  <div class="progress-bar progress-bar-success mh-attack" style="width: 11.583%;" title="Attack duration"></div>
+                  <div class="progress-bar progress-bar-warning mh-recovery" style="width: 19.305%;" title="Recovery duration"></div>
                   <div class="progress-bar progress-bar-danger  mh-reload" style="width: 0%" title="Reload duration"></div>
-                  <div class="progress-bar                      oh-delay hidden"  style="width: 2.39234%;" title="Delay (4-5 frames)"></div>
+                  <div class="progress-bar                      oh-delay hidden"  style="width: 1.5444%;" title="Delay (4-5 frames)"></div>
                   <div class="progress-bar progress-bar-success oh-attack hidden" style="width: 0%" title="Attack duration"></div>
                   <div class="progress-bar progress-bar-warning oh-recovery hidden" style="width: 0%;" title="Recovery duration"></div>
                 </div>
@@ -400,11 +429,11 @@
               </blockquote>
               <blockquote style="padding-right: 0;" id="final-results-block">
                 <div class="progress">
-                  <div class="progress-bar                      mh-delay"  style="width: 2.39234%;" title="Delay (4-5 frames)"></div>
-                  <div class="progress-bar progress-bar-success mh-attack" style="width: 14.3541%;" title="Attack duration"></div>
-                  <div class="progress-bar progress-bar-warning mh-recovery" style="width: 23.9234%;" title="Recovery duration"></div>
+                  <div class="progress-bar                      mh-delay"  style="width: 1.5444%;" title="Delay (4-5 frames)"></div>
+                  <div class="progress-bar progress-bar-success mh-attack" style="width: 11.583%;" title="Attack duration"></div>
+                  <div class="progress-bar progress-bar-warning mh-recovery" style="width: 19.305%;" title="Recovery duration"></div>
                   <div class="progress-bar progress-bar-danger  mh-reload" style="width: 0%" title="Reload duration"></div>
-                  <div class="progress-bar                      oh-delay hidden"  style="width: 2.39234%;" title="Delay (4-5 frames)"></div>
+                  <div class="progress-bar                      oh-delay hidden"  style="width: 1.5444%;" title="Delay (4-5 frames)"></div>
                   <div class="progress-bar progress-bar-success oh-attack hidden" style="width: 0%" title="Attack duration"></div>
                   <div class="progress-bar progress-bar-warning oh-recovery hidden" style="width: 0%;" title="Recovery duration"></div>
                 </div>
@@ -419,7 +448,18 @@
                 </small>
                 <div id="dex-slider" style="min-height: 18px;"></div>
               </blockquote>
-              <div style="clear: both;"></div>
+              <blockquote style="padding-right: 0; padding-top: 30px;" id="cmp-results-block">
+                <small class="base">
+                  <span class="total-result-label">Base</span> 
+                  <span>total:</span>
+                  <cite><span class="total-result-value" title="Including delay">84.0f</span></cite>
+                </small>
+                <small class="final">
+                  <span class="total-result-label">Final</span> 
+                  <span>total:</span>
+                  <cite><span class="total-result-value" title="Including delay">84.0f</span><span class="cmp"></span></cite>
+                </small>
+              </blockquote>
             </div>            
           </div>  
         </div>
@@ -947,6 +987,29 @@
                                   .animate({ opacity: 1.0 }, 250);
       }
       
+      function PopulateCmpResults(baseValues, finalValues)
+      {
+        var totalFramesBase = GetTotalFrames(baseValues);
+        var totalFramesFinal = GetTotalFrames(finalValues);
+        
+        var totalFramesBaseStr = String(GetRoundedValue(totalFramesBase));
+        var totalFramesFinalStr = String(GetRoundedValue(totalFramesFinal));
+        
+        totalFramesBaseStr+= totalFramesBaseStr.indexOf('.') >= 0 ? '' : '.0';
+        totalFramesFinalStr+= totalFramesFinalStr.indexOf('.') >= 0 ? '' : '.0';
+        
+        var $block = $('#cmp-results-block');
+        $block.find('.base .total-result-value').html(totalFramesBaseStr + 'f');
+        $block.find('.final .total-result-value').html(totalFramesFinalStr + 'f');
+        
+        var cmpStr = totalFramesFinal < totalFramesBase ? 'faster' : 'slower';
+        var coef = totalFramesFinal / totalFramesBase;        
+        coef = coef > 1 ? coef : 1 / coef;
+        coef = Math.round(coef * 100) / 100;
+        var message = coef == 1 ? '' : ', or x' + coef + ' ' + cmpStr;
+        $block.find('.cmp').html(message);
+      }
+      
       function UpdateSetupConfig() 
       {
         var was2H = IS_2H_SETUP;
@@ -1075,8 +1138,10 @@
         var baseValues = ComputeBaseValues();
         var finalValues = ComputeFinalValues(baseValues);
         UpdateMaxActionDuration(baseValues, finalValues);
+            
         PopulateBaseResults(baseValues);
         PopulateFinalResults(finalValues);
+        PopulateCmpResults(baseValues, finalValues);
         PREVENT_RESULTS_BLINKING = false;
       }
       
