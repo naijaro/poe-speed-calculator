@@ -784,6 +784,12 @@
           SetSelectWieldable('mainhand', OH_WIELDABLE.id, true); // force dw fists
         }
         
+        if (MH_WIELDABLE.id == FIST_LONG_PAIN_ID && OH_WIELDABLE.id != FIST_LONG_PAIN_ID)
+        {
+          var recommendedMHId = OH_WIELDABLE.category == WIELDABLE_CATEGORIES.oneHanded ? OH_WIELDABLE.id : 1;
+          SetSelectWieldable('mainhand', recommendedMHId, true);
+        }
+        
         UpdateSetupConfig();
         UpdateResults();        
       }
