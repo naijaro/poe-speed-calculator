@@ -284,7 +284,7 @@
     </div>
     <div class="container">
       <h1 id="page-title">Speed Calculator</h1>
-      <p id="page-info">version 1.0.2 (Beta) <a class="text-muted" href="https://forums.obsidian.net/user/160416-maxquest/">by MaxQuest</a></p>     
+      <p id="page-info">version 1.0.3 <a class="text-muted" href="https://forums.obsidian.net/user/160416-maxquest/">by MaxQuest</a></p>     
       <form class="form-horizontal" id="main-form">
         <div class="row">
           <div class="col-lg-6 col-md-6 col-xs-12" id="equipment-block">
@@ -338,10 +338,10 @@
                     <div class="panel-heading">Mainhand</div>
                     <div class="panel-body">
                       <select class="form-control" id="mainhand-select"></select>
-                      <div class="checkbox">
+                      <div class="checkbox" data-prop="durganized">
                         <label><input type="checkbox" class="property" data-prop="durganized"> Is Durganized</label>
                       </div>
-                      <div class="checkbox">
+                      <div class="checkbox" data-prop="speed">
                         <label><input type="checkbox" class="property" data-prop="speed"> Has Speed <span class="text-muted">(enchant)</span></label>
                       </div>
                     </div>
@@ -479,6 +479,8 @@
       var NOTHING_ID = 0;
       var SHIELD_ID = 200;
       var BASHING_SHIELD_ID = 201;
+      var FIST_ID = 300;
+      var FIST_LONG_PAIN_ID = 301;
 
       var WIELDABLE_CATEGORIES = {
         oneHanded: 'One-Handed',
@@ -492,6 +494,8 @@
         GenWieldable(WIELDABLE_CATEGORIES.oneHanded, ATTACK_DURATION_MD, "Battle Axe"),
         GenWieldable(WIELDABLE_CATEGORIES.oneHanded, ATTACK_DURATION_SM, "Club"),
         GenWieldable(WIELDABLE_CATEGORIES.oneHanded, ATTACK_DURATION_SM, "Dagger"),
+        GenWieldable(WIELDABLE_CATEGORIES.oneHanded, ATTACK_DURATION_SM, "Fist", null, FIST_ID),
+        GenWieldable(WIELDABLE_CATEGORIES.oneHanded, ATTACK_DURATION_SM, "Fist (Long Pain)", null, FIST_LONG_PAIN_ID),
         GenWieldable(WIELDABLE_CATEGORIES.oneHanded, ATTACK_DURATION_SM, "Flail"),
         GenWieldable(WIELDABLE_CATEGORIES.oneHanded, ATTACK_DURATION_SM, "Hatchet"),
         GenWieldable(WIELDABLE_CATEGORIES.oneHanded, ATTACK_DURATION_SM, "Mace"),
@@ -531,7 +535,7 @@
       var $WEAPONS_ROW;
       
       var MH_WIELDABLE = GetWieldableById(1);
-      var OH_WIELDABLE = GetWieldableById(SHIELD_ID);
+      var OH_WIELDABLE = GetWieldableById(NOTHING_ID);
       
       var IS_2H_SETUP;
       var IS_DW_SETUP;
@@ -617,7 +621,7 @@
         InitDexSlider();
         BindEvents();
         
-        UpdateResults(); 
+        UpdateResults();
       }
 
       function InitDexSlider()
@@ -736,6 +740,24 @@
       {
         MH_WIELDABLE = GetWieldableById(wieldableId);
         
+        var $container = GetMainhandCol();
+        var $checkboxDurganized = $container.find('.checkbox[data-prop="durganized"]');
+        var $checkboxSpeed = $container.find('.checkbox[data-prop="speed"]');
+        
+        $checkboxDurganized.toggleClass('invisible', !WieldableCanBeDurganized(MH_WIELDABLE));        
+        $checkboxSpeed.toggleClass('invisible', !WieldableCanHaveSpeed(MH_WIELDABLE));
+        
+        // adjust fist options:
+        if (!WieldableIsFist(MH_WIELDABLE) && WieldableIsFist(OH_WIELDABLE))
+        {
+          SetSelectWieldable('offhand', NOTHING_ID, true);
+        }
+        
+        if (WieldableIsFist(MH_WIELDABLE) && (OH_WIELDABLE.id == NOTHING_ID || WieldableIsFist(OH_WIELDABLE)))
+        {
+          SetSelectWieldable('offhand', MH_WIELDABLE.id, true);  // force dw fists
+        }
+                
         UpdateSetupConfig();
         UpdateResults(); 
       }
@@ -744,30 +766,47 @@
       {
         OH_WIELDABLE = GetWieldableById(wieldableId);
         
-        var $container = $('#offhand-col');
+        var $container = GetOffhandCol();
         var $checkboxDurganized = $container.find('.checkbox[data-prop="durganized"]');
         var $checkboxSpeed = $container.find('.checkbox[data-prop="speed"]');
         
-        $checkboxDurganized.toggleClass('invisible', $.inArray(OH_WIELDABLE.category, [
-          WIELDABLE_CATEGORIES.emptyHand
-        ]) >= 0);
+        $checkboxDurganized.toggleClass('invisible', !WieldableCanBeDurganized(OH_WIELDABLE));        
+        $checkboxSpeed.toggleClass('invisible', !WieldableCanHaveSpeed(OH_WIELDABLE));
         
-        $checkboxSpeed.toggleClass('invisible', $.inArray(OH_WIELDABLE.category, [
-          WIELDABLE_CATEGORIES.emptyHand,
-          WIELDABLE_CATEGORIES.shields
-        ]) >= 0);
+        // adjust fist options:
+        if (WieldableIsFist(MH_WIELDABLE) && OH_WIELDABLE.id == NOTHING_ID)
+        {
+          SetSelectWieldable('mainhand', 1, true);
+        }
+        
+        if (WieldableIsFist(OH_WIELDABLE) && MH_WIELDABLE.id != OH_WIELDABLE.id)
+        {
+          SetSelectWieldable('mainhand', OH_WIELDABLE.id, true); // force dw fists
+        }
         
         UpdateSetupConfig();
         UpdateResults();        
       }
-            
+      
       /* ****************************** GETTERS ***************************** */
-
+      
       function GenWieldable(category, attackDuration, title, reloadDuration, forcedId)
       {
-        VARS.WIELDABLE_ID = forcedId || VARS.WIELDABLE_ID || 1;
+        var wieldableId = null;
+        
+        if (typeof forcedId !== 'undefined' && forcedId != null) 
+        {
+          wieldableId = forcedId;
+        }
+        else
+        {
+          VARS.WIELDABLE_ID = VARS.WIELDABLE_ID || 0;
+          VARS.WIELDABLE_ID++;
+          wieldableId = VARS.WIELDABLE_ID;
+        }
+        
         return {
-          id: VARS.WIELDABLE_ID++,
+          id: wieldableId,
           title: title,
           category: category,
           attackDuration: attackDuration,
@@ -786,9 +825,21 @@
       
       function GenEffect(category, value, title, suppressingCategory, forcedId, multieffect)
       {
-        VARS.EFFECT_ID = forcedId || VARS.EFFECT_ID || 1;        
+        var effectId = null;
+        
+        if (typeof forcedId !== 'undefined' && forcedId != null) 
+        {
+          effectId = forcedId;
+        }
+        else
+        {
+          VARS.EFFECT_ID = VARS.EFFECT_ID || 0;
+          VARS.EFFECT_ID++;
+          effectId = VARS.EFFECT_ID;
+        }
+              
         return {
-          id: VARS.EFFECT_ID++,
+          id: effectId,
           title: title,
           value: value,
           category: category,          
@@ -848,7 +899,37 @@
         return VARS.$FINAL_RESULTS_BLOCK;
       }
       
+      function GetMainhandCol()
+      {
+        if (VARS.$MAINHAND_COL == null)
+          VARS.$MAINHAND_COL = $('#mainhand-col');
+        
+        return VARS.$MAINHAND_COL;
+      }
+      
+      function GetOffhandCol()
+      {
+        if (VARS.$OFFHAND_COL == null)
+          VARS.$OFFHAND_COL = $('#offhand-col');
+        
+        return VARS.$OFFHAND_COL;
+      }
+      
       /* ****************************** ACTIONS ***************************** */
+
+      function SetSelectWieldable(hand, wieldableId, triggerChange) 
+      {
+        var $container = hand == 'mainhand' ? GetMainhandCol() : GetOffhandCol();
+        var $select = $container.find('select');
+                
+        $select.val(wieldableId);
+        
+        if (triggerChange && hand == 'mainhand')
+          OnMainhandChange(wieldableId);
+        
+        if (triggerChange && hand == 'offhand')
+          OnOffhandChange(wieldableId);
+      }
 
       function PopulateWeaponSelects()
       {
@@ -1197,7 +1278,7 @@
       {
         values = jQuery.extend(true, {}, values || ComputeBaseValues());
         var cats = EFFECT_CATEGORIES;
-        var coefs = IsWieldableRanged(MH_WIELDABLE) ? EFFECT_COEFFICIENTS.ranged
+        var coefs = WieldableIsRanged(MH_WIELDABLE) ? EFFECT_COEFFICIENTS.ranged
                                                     : EFFECT_COEFFICIENTS.melee;
                    
         var dexCoef = GetDexCoef(CURRENT_DEX);
@@ -1232,13 +1313,16 @@
         
         var speedCoef = 0;
         var cats = EFFECT_CATEGORIES;
-        var coefs = IsWieldableRanged(MH_WIELDABLE) ? EFFECT_COEFFICIENTS.ranged
+        var coefs = WieldableIsRanged(MH_WIELDABLE) ? EFFECT_COEFFICIENTS.ranged
                                                     : EFFECT_COEFFICIENTS.melee;
         var coefficients = jQuery.extend(true, {}, coefs);
         
-        var $container = $('#mainhand-col');
-        var isDurganized = $container.find('.property[data-prop="durganized"]').is(':checked');
-        var hasSpeed = $container.find('.property[data-prop="speed"]').is(':checked');
+        var $container = GetMainhandCol();
+        var durganizedCheckboxChecked = $container.find('.property[data-prop="durganized"]').is(':checked');
+        var speedCheckboxChecked = $container.find('.property[data-prop="speed"]').is(':checked');
+        
+        var isDurganized = durganizedCheckboxChecked && WieldableCanBeDurganized(MH_WIELDABLE);
+        var hasSpeed = speedCheckboxChecked && WieldableCanHaveSpeed(MH_WIELDABLE);
         
         for (var category in coefficients)
         {
@@ -1271,13 +1355,16 @@
         
         var speedCoef = 0;
         var cats = EFFECT_CATEGORIES;
-        var coefs = IsWieldableRanged(OH_WIELDABLE) ? EFFECT_COEFFICIENTS.ranged
+        var coefs = WieldableIsRanged(OH_WIELDABLE) ? EFFECT_COEFFICIENTS.ranged
                                                     : EFFECT_COEFFICIENTS.melee;
         var coefficients = jQuery.extend(true, {}, coefs);
         
-        var $container = $('#offhand-col');
-        var isDurganized = $container.find('.property[data-prop="durganized"]').is(':checked');
-        var hasSpeed = $container.find('.property[data-prop="speed"]').is(':checked');
+        var $container = GetOffhandCol();
+        var durganizedCheckboxChecked = $container.find('.property[data-prop="durganized"]').is(':checked');
+        var speedCheckboxChecked = $container.find('.property[data-prop="speed"]').is(':checked');
+        
+        var isDurganized = durganizedCheckboxChecked && WieldableCanBeDurganized(OH_WIELDABLE);
+        var hasSpeed = speedCheckboxChecked && WieldableCanHaveSpeed(OH_WIELDABLE);
         
         for (var category in coefficients)
         {
@@ -1294,7 +1381,7 @@
 
           speedCoef+= coef - 1;
         }
-                
+        
         return speedCoef - ARMOR_PENALTY;
       }
       
@@ -1329,9 +1416,16 @@
         return 1 + (dex - 10) / 33.3;
       }
       
-      function IsWieldableRanged(wieldable)
+      function WieldableIsRanged(wieldable)
       {
-        return wieldable != null && wieldable.category == WIELDABLE_CATEGORIES.twoHandedRanged;
+        return wieldable != null && (
+               wieldable.category == WIELDABLE_CATEGORIES.twoHandedRanged ||
+               wieldable.id == FIST_LONG_PAIN_ID);
+      }
+      
+      function WieldableIsFist(wieldable)
+      {
+        return wieldable != null && (wieldable.id == FIST_ID || wieldable.id == FIST_LONG_PAIN_ID);
       }
       
       function IsMultiplicativeRecoveryCategory(category)
@@ -1349,10 +1443,26 @@
       {
         if (OH_WIELDABLE == null || OH_WIELDABLE.category != WIELDABLE_CATEGORIES.shields)
           return false;
-
-        return $('#offhand-col .property[data-prop="durganized"]').is(':checked');
+        
+        var $container = GetOffhandCol();
+        return $container.find('.property[data-prop="durganized"]').is(':checked');
       }
       
+      function WieldableCanBeDurganized(wieldable)
+      {
+        return wieldable != null && !WieldableIsFist(wieldable) && $.inArray(wieldable.category, [
+          WIELDABLE_CATEGORIES.emptyHand
+        ]) < 0;
+      }
+      
+      function WieldableCanHaveSpeed(wieldable)
+      {
+        return wieldable != null && !WieldableIsFist(wieldable) && $.inArray(wieldable.category, [
+          WIELDABLE_CATEGORIES.emptyHand,
+          WIELDABLE_CATEGORIES.shields
+        ]) < 0;
+      }
+            
       function GetPercStr(floatVal)
       {
         return (floatVal * 100) + '%';
